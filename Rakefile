@@ -1,49 +1,78 @@
 # frozen_string_literal: true
 
 require 'rake/testtask'
+require './require_app'
 
-CODE = 'lib/'
+task default: :spec
 
-task :default do
-  puts `rake -T`
+desc 'Tests API specs only'
+task :api_spec do
+  sh 'ruby spec/api_spec.rb'
 end
 
-desc 'run tests'
-task :spec do
-  # To UPDATE TO TEST NAME
-  sh 'ruby spec/gateway_github_spec.rb'
+desc 'Test all the specs'
+Rake::TestTask.new(:spec) do |t|
+  t.pattern = 'spec/*_spec.rb'
+  t.warning = false
 end
 
-desc 'Keep rerunning tests upon changes'
-task :respec do
-  sh "rerun -c 'rake spec' --ignore 'coverage/*'"
+desc 'Runs rubocop on tested code'
+task style: %i[spec audit] do
+  sh 'rubocop .'
 end
 
-namespace :vcr do
-  desc 'delete cassette fixtures'
-  task :wipe do
-    sh 'rm spec/fixtures/cassettes/*.yml' do |ok, _|
-      puts(ok ? 'Cassettes deleted' : 'No cassettes found')
+desc 'Update vulnerabilities lit and audit gems'
+task :audit do
+  sh 'bundle audit check --update'
+end
+
+desc 'Checks for release'
+task release?: %i[spec style audit] do
+  puts "\nReady for release!"
+end
+
+task :print_env do
+  puts "Environment: #{ENV.fetch('RACK_ENV', 'development')}"
+end
+
+desc 'Run application console (pry)'
+task console: :print_env do
+  sh 'pry -r ./spec/test_load_all'
+end
+
+namespace :db do
+  task :load do
+    require_app(nil) # load nothing by default
+    require 'sequel'
+
+    Sequel.extension :migration
+    @app = TrackIt::Api
+  end
+
+  task :load_models do
+    require_app('models')
+  end
+
+  desc 'Run migrations'
+  task migrate: %i[load print_env] do
+    puts 'Migrating database to latest'
+    Sequel::Migrator.run(@app.DB, 'app/db/migrations')
+  end
+
+  desc 'Destroy data in database; maintain tables'
+  task delete: :load_models do
+    TrackIt::Project.dataset.destroy
+  end
+
+  desc 'Delete dev or test database file'
+  task drop: :load do
+    if @app.environment == :production
+      puts 'Cannot wipe production database!'
+      return
     end
-  end
-end
 
-namespace :quality do
-  desc 'run all static-analysis quality checks'
-  task all: %i[rubocop reek flog]
-
-  desc 'code style linter'
-  task :rubocop do
-    sh 'rubocop'
-  end
-
-  desc 'code smell detector'
-  task :reek do
-    sh 'reek'
-  end
-
-  desc 'complexiy analysis'
-  task :flog do
-    sh "flog #{CODE}"
+    db_filename = "app/db/store/#{TrackIt::Api.environment}.db"
+    FileUtils.rm(db_filename)
+    puts "Deleted #{db_filename}"
   end
 end
