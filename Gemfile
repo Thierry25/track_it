@@ -42,8 +42,6 @@ gem 'rerun'
 # Quality
 gem 'rubocop'
 
-
-
 # # Validation
 # gem 'dry-struct', '~> 1.4'
 # gem 'dry-types', '~> 1.5'
