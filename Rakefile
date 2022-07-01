@@ -12,7 +12,7 @@ end
 
 desc 'Test all the specs'
 Rake::TestTask.new(:spec) do |t|
-  t.pattern = 'spec/*_spec.rb'
+  t.pattern = 'spec/**/*_spec.rb'
   t.warning = false
 end
 
@@ -27,7 +27,7 @@ task :audit do
 end
 
 desc 'Checks for release'
-task release?: %i[spec style audit] do
+task release: %i[spec style audit] do
   puts "\nReady for release!"
 end
 
@@ -74,5 +74,13 @@ namespace :db do
     db_filename = "app/db/store/#{TrackIt::Api.environment}.db"
     FileUtils.rm(db_filename)
     puts "Deleted #{db_filename}"
+  end
+end
+
+namespace :newkey do
+  desc 'Create sample cryptographic key for database'
+  task :db do
+    require_app('lib')
+    puts "DB_KEY: #{SecureDB.generate_key}"
   end
 end
