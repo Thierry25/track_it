@@ -2,6 +2,7 @@
 - name: "ADS Messenger"
   description: "Android Application that will allow users to chat with other users"
   type: "Personal"
+  organization: ""
 - name: "Allo Chat"
   description: "New Version of Google Chat Application"
   type: "Professional"

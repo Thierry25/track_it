@@ -12,7 +12,7 @@ module TrackIt
     plugin :timestamps
 
     # rubocop:disable Metrics/MethodLength
-    def to_json(_options = {})
+    def to_json(options = {})
       JSON(
         {
           data: {

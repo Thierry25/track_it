@@ -17,7 +17,7 @@ Sequel.migration do
       DateTime :created_at
       DateTime :updated_at
 
-      unique [:project_id]
+      unique %i[project_id description title]
     end
   end
 end

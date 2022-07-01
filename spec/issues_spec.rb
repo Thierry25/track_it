@@ -4,6 +4,7 @@ require_relative './spec_helper'
 
 describe 'Test Issue Handling' do
   include Rack::Test::Methods
+
   before do
     wipe_database
 
@@ -18,7 +19,7 @@ describe 'Test Issue Handling' do
       proj.add_issue(issue)
     end
 
-    get "api/v1/projects/#{proj.id}/issues/"
+    get "api/v1/projects/#{proj.id}/issues"
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
@@ -47,11 +48,11 @@ describe 'Test Issue Handling' do
 
   it 'HAPPY: should be able to create new issues' do
     proj = TrackIt::Project.first
-    isssue_data = DATA[:issues][1]
+    issue_data = DATA[:issues][1]
 
     req_header = { 'CONTENT_TYPE' => 'application/json' }
     post "api/v1/projects/#{proj.id}/issues",
-         isssue_data.to_json, req_header
+         issue_data.to_json, req_header
 
     _(last_response.status).must_equal 201
     _(last_response.header['Location'].size).must_be :>, 0
