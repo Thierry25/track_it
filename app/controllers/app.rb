@@ -12,7 +12,7 @@ module TrackIt
       response['Content-Type'] = 'application/json'
 
       routing.root do
-        { message: 'TrackIt API up at /api/v1' }.to_json
+        { message: 'TrackItAPI up at /api/v1' }.to_json
       end
 
       @api_root = 'api/v1'
@@ -44,15 +44,15 @@ module TrackIt
                 new_data = JSON.parse(routing.body.read)
                 proj = Project.first(id: proj_id)
                 new_issue = proj.add_issue(new_data)
+                raise 'Could not save document' unless new_issue
 
-                if new_issue
-                  response.status = 201
-                  response['Location'] = "#{@issue_route}/#{new_issue.id}"
-                  { message: 'Issue saved', data: new_issue }.to_json
-                else
-                  routing.halt 400, 'Could not save issue'
-                end
+                response.status = 201
+                response['Location'] = "#{@issue_route}/#{new_issue.id}"
+                { message: 'Issue saved', data: new_issue }.to_json
 
+              rescue Sequel::MassAssignmentRestriction
+                Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+                routing.halt 400, { message: 'Illegal Attributes' }.to_json
               rescue StandardError
                 routing.halt 500, { message: 'Database error' }.to_json
               end
@@ -84,6 +84,9 @@ module TrackIt
             response.status = 201
             response['Location'] = "#{@proj_route}/#{new_proj.id}"
             { message: 'Project saved', data: new_proj }.to_json
+          rescue Sequel::MassAssignmentRestriction
+            Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+            routing.halt 400, { message: 'Illegal Attributes' }.to_json
           rescue StandardError => e
             routing.halt 400, { message: e.message }.to_json
           end

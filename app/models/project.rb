@@ -10,6 +10,8 @@ module TrackIt
     plugin :association_dependencies, issues: :destroy
 
     plugin :timestamps
+    plugin :whitelist_security
+    set_allowed_columns :name, :description, :type, :organization
 
     # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
