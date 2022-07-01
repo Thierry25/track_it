@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-# frozen_string_literal: true
-
-source 'https://rubygems.org'
 
 # Web API
 gem 'json'
@@ -41,8 +38,6 @@ gem 'rerun'
 
 # Quality
 gem 'rubocop'
-
-
 
 # # Validation
 # gem 'dry-struct', '~> 1.4'

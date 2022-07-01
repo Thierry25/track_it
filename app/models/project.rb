@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 require 'json'
-require 'base64'
+require 'sequel'
 
 module TrackIt
-  # Models a secret issue
-  class Issue < Sequel::Model
-    many_to_one :project
+  # Models a project
+  class Project < Sequel::Model
+    one_to_many :issues
+    plugin :association_dependencies, issues: :destroy
 
     plugin :timestamps
 
@@ -15,18 +16,14 @@ module TrackIt
       JSON(
         {
           data: {
-            type_: 'issue',
+            type_: 'project',
             attributes: {
               id:,
-              type:,
-              priority:,
-              status:,
+              name:,
               description:,
-              title:
+              type:,
+              organization:
             }
-          },
-          included: {
-            project:
           }
         }, options
       )
