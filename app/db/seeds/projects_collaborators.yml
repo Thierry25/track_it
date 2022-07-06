@@ -1,0 +1,9 @@
+---
+- proj_name: ADS Messenger
+  collaborator_email:
+    - pop@gmail.com
+    - loud@outlook.com
+- proj_name: Allo Chat
+  collaborator_email:
+    - thierry@gmail.com
+    - pop@gmail.com

@@ -1,0 +1,10 @@
+---
+- username: thierrym
+  email: thierry@gmail.com
+  password: mypa$$w0rd
+- username: loud99
+  email: loud@outlook.com
+  password: randompass
+- username: pop
+  email: pop@gmail.com
+  password: passpop

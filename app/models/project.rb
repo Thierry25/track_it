@@ -6,11 +6,18 @@ require 'sequel'
 module TrackIt
   # Models a project
   class Project < Sequel::Model
-    one_to_many :issues
-    plugin :association_dependencies, issues: :destroy
+    many_to_one :manager, class: :'TrackIt::Account'
+    many_to_one :organization, class: :'TrackIt::Organization'
+    many_to_one :department, class: :'TrackIt::Department'
 
+    one_to_many :issues
+
+    plugin :uuid, field: :id
     plugin :timestamps
     plugin :whitelist_security
+
+    plugin :association_dependencies, issues: :destroy
+
     set_allowed_columns :name, :description, :type, :organization
 
     # rubocop:disable Metrics/MethodLength
