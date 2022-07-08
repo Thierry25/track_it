@@ -9,7 +9,7 @@ Sequel.migration do
 
       foreign_key :project_id, table: :projects
       foreign_key :submitter_id, table: :accounts
-      foreign_key :assignee_id, table: :accounts
+      # foreign_key :assignee_id, table: :accounts
 
       String      :type, null: false
       String      :priority, null: false
