@@ -6,8 +6,21 @@ require 'sequel'
 module TrackIt
   # Models a comment
   class Comment < Sequel::Model
-    many_to_one :issue
-    many_to_one :commenter, class: :'TrackIt::Account'
+    many_to_many        :submitters,
+                        class: :'TrackIt::Account',
+                        join_table: :accounts_comments,
+                        left_key: :comment_id, right_key: :submitter_id
+
+    # NAME SUCKS
+    many_to_many        :related_projects,
+                        class: :'TrackIt::Project',
+                        join_table: :projects_comments,
+                        left_key: :comment_id, right_key: :project_id
+
+    many_to_many        :related_issues,
+                        class: :'TrackIt::Issue',
+                        join_table: :issues_comments,
+                        left_key: :comment_id, right_key: :issue_id
 
     plugin              :timestamps, update_on_create: true
     plugin              :whitelist_security

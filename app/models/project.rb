@@ -6,12 +6,33 @@ require 'sequel'
 module TrackIt
   # Models a project
   class Project < Sequel::Model
-    many_to_one         :manager, class: :'TrackIt::Account'
-    many_to_one         :organization, class: :'TrackIt::Organization'
+    one_to_many         :issues
+    # one_to_many         :comments, class: :'TrackIt::ProjectComment', key: :commenter_id
+
+    # many_to_one         :manager, class: :'TrackIt::Account'
+    # many_to_one         :organization, class: :'TrackIt::Organization'
     many_to_one         :department, class: :'TrackIt::Department'
 
-    one_to_many         :issues
-    one_to_many         :comments, class: :'TrackIt::ProjectComment', key: :commenter_id
+    many_to_many        :collaborators,
+                        class: :'TrackIt::Account',
+                        join_table: :accounts_projects_collab,
+                        left_key: :project_id, right_key: :collaborator_id
+
+    many_to_many        :managers,
+                        class: :'TrackIt::Account',
+                        join_table: :accounts_projects,
+                        left_key: :project_id, right_key: :manager_id
+
+    many_to_many        :comments,
+                        class: :'TrackIt::Comment',
+                        join_table: :projects_comments,
+                        left_key: :project_id, right_key: :comment_id
+
+    # THIS NAME SUCKS, FIND A BETTER NAME
+    many_to_many        :parent_organizations,
+                        class: :'TrackIt::Organization',
+                        join_table: :organizations_projects,
+                        left_key: :project_id, right_key: :organization_id
 
     plugin              :uuid, field: :id
     plugin              :timestamps
@@ -19,7 +40,10 @@ module TrackIt
 
     plugin              :association_dependencies,
                         issues: :destroy,
-                        comments: :destroy
+                        collaborators: :nullify,
+                        managers: :nullify,
+                        comments: :nullify,
+                        parent_organizations: :nullify
 
     set_allowed_columns :name, :description, :deadline, :url
 

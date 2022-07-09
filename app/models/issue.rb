@@ -6,21 +6,31 @@ require 'base64'
 module TrackIt
   # Models a secret issue
   class Issue < Sequel::Model
-    many_to_one         :project, table: :'TrackIte::mI'
-    many_to_one         :submitter, table: :'TrackIt::Account'
-
-    one_to_many         :comments
+    many_to_one         :project
 
     many_to_many        :assignees,
                         class: :'TrackIt::Account',
                         join_table: :accounts_issues,
-                        left_key: :assignee_id, right_key: :issue_id
+                        left_key: :issue_id, right_key: :assignee_id
+
+    many_to_many        :submitters,
+                        class: :'TrackIt::Account',
+                        join_table: :accounts_submitted_issues,
+                        left_key: :issue_id, right_key: :submitter_id
+
+    many_to_many        :comments,
+                        class: :'TrackIt::Comment',
+                        join_table: :issues_comments,
+                        left_key: :issue_id, right_key: :comment_id
 
     plugin              :uuid, field: :id
     plugin              :timestamps
     plugin              :whitelist_security
     plugin              :association_dependencies,
-                        comments: :destroy
+                        comments: :nullify,
+                        assignees: :nullify,
+                        submitters: :nullify
+
     set_allowed_columns :type, :priority, :status, :description, :title
 
     # Secure getters and setters
