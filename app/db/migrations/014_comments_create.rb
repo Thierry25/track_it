@@ -4,10 +4,10 @@ require 'sequel'
 
 Sequel.migration do
   change do
-    create_table(:project_comments) do
+    create_table(:comments) do
       primary_key :id
-      foreign_key :project_id, table: :projects
-      foreign_key :commenter_id, table: :accounts
+      # foreign_key :issue_id, table: :issues
+      # //foreign_key :commenter_id, table: :accounts
 
       String      :content, null: false, default: ''
 

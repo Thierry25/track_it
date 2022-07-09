@@ -8,7 +8,7 @@ Sequel.migration do
       uuid        :id, primary_key: true
 
       foreign_key :project_id, table: :projects
-      foreign_key :submitter_id, table: :accounts
+      # // => foreign_key :submitter_id, table: :accounts
       # foreign_key :assignee_id, table: :accounts
 
       String      :type, null: false

@@ -7,13 +7,19 @@ require_relative './password'
 module TrackIt
   # Models a registered account
   class Account < Sequel::Model
-    one_to_many         :managed_projects, class: :'TrackIt::Project', key: :manager_id
     one_to_many         :owned_organizations, class: :'TrackIt::Organization', key: :owner_id
-    one_to_many         :submitted_issues, class: :'TrackIt::Issue', key: :submitter_id
-    one_to_many         :submitted_comments, class: :'TrackIt::Comment', key: :commenter_id
-    one_to_many         :submitted_projects_comments, class: :'TrackIt::ProjectComment', key: :commenter_id
+    # // one_to_many         :managed_projects, class: :'TrackIt::Project', key: :manager_id
 
-    many_to_one         :team, class: :'TrackIt::Department'
+    # // one_to_many         :submitted_issues, class: :'TrackIt::Issue', key: :submitter_id
+    # // one_to_many         :submitted_issues_comments, class: :'TrackIt::Comment', key: :commenter_id
+    # // one_to_many         :submitted_projects_comments, class: :'TrackIt::ProjectComment', key: :commenter_id
+
+    # // many_to_one         :department
+
+    many_to_many        :teams,
+                        class: :'TrackIt::Department',
+                        join_table: :accounts_departments,
+                        left_key: :employee_id, right_key: :department_id
 
     many_to_many        :positions,
                         class: :'TrackIt::Organization',
@@ -28,7 +34,7 @@ module TrackIt
     plugin              :association_dependencies,
                         managed_projects: :destroy,
                         submitted_issues: :destroy,
-                        submitted_comments: :destroy,
+                        submitted_issues_comments: :destroy,
                         submitted_projects_comments: :destroy,
                         positions: :nullify,
                         assigned_issues: :nullify
@@ -54,8 +60,8 @@ module TrackIt
     #   submitted_issues
     # end
 
-    # def submitted_comments
-    #   submitted_comments
+    # def submitted_issues_comments
+    #   submitted_issues_comments
     # end
 
     # def positions
