@@ -9,6 +9,8 @@ Sequel.migration do
       # foreign_key :department_id, table: :departments
 
       # String :username, null: false, unique: true
+      String      :first_name, null: false
+      String      :last_name, null: false
       String      :email, null: false, unique: true
       String      :password_digest
       String      :role, null: false

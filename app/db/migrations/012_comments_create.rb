@@ -6,6 +6,7 @@ Sequel.migration do
   change do
     create_table(:comments) do
       primary_key :id
+      foreign_key :commenter_id, table: :accounts
 
       String      :content, null: false, default: ''
 

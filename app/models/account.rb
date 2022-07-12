@@ -8,6 +8,8 @@ module TrackIt
   # Models a registered account
   class Account < Sequel::Model
     one_to_many         :owned_organizations, class: :'TrackIt::Organization', key: :owner_id
+    one_to_many         :submitted_comments, class: :'TrackIt::Comment', key: :commenter_id
+    one_to_many         :submitted_issues, class: :'TrackIt::Issue', key: :submitter_id
 
     many_to_many        :teams,
                         class: :'TrackIt::Department',
@@ -29,15 +31,10 @@ module TrackIt
                         join_table: :accounts_organizations,
                         left_key: :employee_id, right_key: :employer_id
 
-    many_to_many        :submitted_issues,
-                        class: :'TrackIt::Issue',
-                        join_table: :accounts_submitted_issues,
-                        left_key: :submitter_id, right_key: :issue_id
-
-    many_to_many        :submitted_comments,
-                        class: :'TrackIt::Comment',
-                        join_table: :accounts_comments,
-                        left_key: :submitter_id, right_key: :comment_id
+    # many_to_many        :submitted_issues,
+    #                     class: :'TrackIt::Issue',
+    #                     join_table: :accounts_submitted_issues,
+    #                     left_key: :submitter_id, right_key: :issue_id
 
     many_to_many        :assigned_issues,
                         class: :'TrackIt::Issue',
@@ -46,16 +43,16 @@ module TrackIt
 
     plugin              :association_dependencies,
                         owned_organizations: :destroy,
+                        submitted_comments: :destroy,
+                        submitted_issues: :destroy,
                         teams: :nullify,
                         managed_projects: :nullify,
                         collaborations: :nullify,
                         positions: :nullify,
-                        submitted_issues: :nullify,
-                        submitted_comments: :nullify,
                         assigned_issues: :nullify
 
     plugin              :whitelist_security
-    set_allowed_columns :email, :password, :role, :picture
+    set_allowed_columns :first_name, :last_name, :email, :password, :role, :picture
 
     plugin              :timestamps, update_on_create: true
 

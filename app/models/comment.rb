@@ -6,10 +6,7 @@ require 'sequel'
 module TrackIt
   # Models a comment
   class Comment < Sequel::Model
-    many_to_many        :submitters,
-                        class: :'TrackIt::Account',
-                        join_table: :accounts_comments,
-                        left_key: :comment_id, right_key: :submitter_id
+    many_to_one         :submitter, class: :'TrackIt::Account'
 
     # NAME SUCKS
     many_to_many        :related_projects,
@@ -24,6 +21,9 @@ module TrackIt
 
     plugin              :timestamps, update_on_create: true
     plugin              :whitelist_security
+    plugin              :association_dependencies,
+                        related_projects: :nullify,
+                        related_issues: :nullify
 
     set_allowed_columns :content
 

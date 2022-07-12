@@ -4,6 +4,6 @@ require 'sequel'
 
 Sequel.migration do
   change do
-    create_join_table(submitter_id: :accounts, comment_id: :comments)
+    create_join_table(project_id: :projects, issue_id: :issues)
   end
 end

@@ -6,7 +6,7 @@ require 'sequel'
 module TrackIt
   # Models a project
   class Project < Sequel::Model
-    one_to_many         :issues
+    # one_to_many         :issues
     # one_to_many         :comments, class: :'TrackIt::ProjectComment', key: :commenter_id
 
     # many_to_one         :manager, class: :'TrackIt::Account'
@@ -28,6 +28,11 @@ module TrackIt
                         join_table: :projects_comments,
                         left_key: :project_id, right_key: :comment_id
 
+    many_to_many        :issues,
+                        class: :'TrackIt::Issue',
+                        join_table: :projects_issues,
+                        left_key: :project_id, right_key: :issue_id
+
     # THIS NAME SUCKS, FIND A BETTER NAME
     many_to_many        :parent_organizations,
                         class: :'TrackIt::Organization',
@@ -39,11 +44,11 @@ module TrackIt
     plugin              :whitelist_security
 
     plugin              :association_dependencies,
-                        issues: :destroy,
                         collaborators: :nullify,
                         managers: :nullify,
                         comments: :nullify,
-                        parent_organizations: :nullify
+                        parent_organizations: :nullify,
+                        issues: :nullify
 
     set_allowed_columns :name, :description, :deadline, :url
 
