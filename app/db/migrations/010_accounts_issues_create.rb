@@ -10,7 +10,6 @@ Sequel.migration do
       foreign_key :issue_id, :issues
 
       index %i[assignee_id issue_id]
-      unique %i[assignee_id issue_id]
     end
   end
 end

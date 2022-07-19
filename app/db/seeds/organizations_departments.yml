@@ -1,0 +1,8 @@
+---
+- org_name: GOOPLE
+  depart_name:
+    - IT
+- org_name: TrackIt
+  depart_name:
+    - HR
+    - SO

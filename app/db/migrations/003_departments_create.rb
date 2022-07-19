@@ -13,6 +13,8 @@ Sequel.migration do
 
       DateTime    :created_at
       DateTime    :updated_at
+
+      unique %i[organization_id name]
     end
   end
 end

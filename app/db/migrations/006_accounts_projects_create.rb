@@ -10,7 +10,6 @@ Sequel.migration do
       foreign_key :project_id, :projects
 
       index %i[manager_id project_id]
-      unique %i[manager_id project_id]
     end
   end
 end

@@ -1,0 +1,20 @@
+---
+- team_name: IT
+  employee_email:
+    - soumya.ray@gmail.com
+    - stephen.curry@outlook.com
+    - odiceloud99@gmail.com
+    - gianis@gmail.com
+    - luka@gmail.com
+    - neymar@gmail.com
+    - fabricemarcelin@gmail.com
+- team_name: HR
+  employee_email:
+    - lionel.messi@gmail.com
+    - elonmusk@gmail.com
+    - odiceloud99@gmail.com
+- team_name: SO
+  employee_email:
+    - marcelinthierry@gmail.com
+    - elonmusk@gmail.com
+    - cristiano.ronaldo@gmail.com

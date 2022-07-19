@@ -1,8 +1,10 @@
 ---
-- username: thierrym
-  proj_name:
-    - ADS Messenger
-    - Allo Chat
-- username: loud99
-  proj_name:
-    - EtaShare
+- proj_name: ADS Messenger
+  manager_email:
+    - stephen.curry@outlook.com
+- proj_name: EtaShare
+  manager_email:
+    - lebron.james@gmail.com
+- proj_name: Allo Chat
+  manager_email:
+    - kevin.durant@outlook.com

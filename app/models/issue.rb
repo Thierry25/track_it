@@ -33,7 +33,7 @@ module TrackIt
                         related_issues: :nullify
     # submitters: :nullify
 
-    set_allowed_columns :type, :priority, :status, :description, :title
+    set_allowed_columns :ticket_number, :type, :priority, :status, :description, :title
 
     # Secure getters and setters
     def description
@@ -66,10 +66,11 @@ module TrackIt
               description:,
               title:
             }
-          },
-          included: {
-            project:
           }
+          # },
+          # included: {
+          #   project:
+          # }
         }, options
       )
     end

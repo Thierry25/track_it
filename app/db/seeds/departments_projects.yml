@@ -1,0 +1,8 @@
+---
+- dep_name: IT
+  proj_name:
+    - ADS Messenger
+- dep_name: HR
+  proj_name:
+    - Allo Chat
+    - EtaShare

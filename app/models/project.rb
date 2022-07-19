@@ -6,11 +6,6 @@ require 'sequel'
 module TrackIt
   # Models a project
   class Project < Sequel::Model
-    # one_to_many         :issues
-    # one_to_many         :comments, class: :'TrackIt::ProjectComment', key: :commenter_id
-
-    # many_to_one         :manager, class: :'TrackIt::Account'
-    # many_to_one         :organization, class: :'TrackIt::Organization'
     many_to_one         :department, class: :'TrackIt::Department'
 
     many_to_many        :collaborators,
@@ -50,12 +45,13 @@ module TrackIt
                         parent_organizations: :nullify,
                         issues: :nullify
 
-    set_allowed_columns :name, :description, :deadline, :url
+    set_allowed_columns :name, :description, :url,
+                        # :deadline
 
-    # Secure getters and setters
-    def name
-      SecureDB.decrypt(name_secure)
-    end
+                        # Secure getters and setters
+                        def name
+                          SecureDB.decrypt(name_secure)
+                        end
 
     def name=(plaintext)
       self.name_secure = SecureDB.encrypt(plaintext)
@@ -69,13 +65,13 @@ module TrackIt
       self.description_secure = SecureDB.encrypt(plaintext)
     end
 
-    def deadline
-      SecureDb.decrypt(deadline_secure)
-    end
+    # def deadline
+    #   SecureDb.decrypt(deadline_secure)
+    # end
 
-    def deadline=(plaintext)
-      self.deadline_secure = SecureDB.encrypt(plaintext)
-    end
+    # def deadline=(plaintext)
+    #   self.deadline_secure = SecureDB.encrypt(plaintext)
+    # end
 
     # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
@@ -87,8 +83,8 @@ module TrackIt
               id:,
               name:,
               description:,
-              deadline:,
               url:
+              # deadline:,
             }
           }
         }, options

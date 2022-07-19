@@ -11,11 +11,13 @@ Sequel.migration do
 
       String      :name_secure, null: false
       String      :description_secure, null: false
-      DateTime    :deadline_secure, null: false
+      # DateTime    :deadline_secure, null: false
       String      :url
 
       DateTime    :created_at
       DateTime    :updated_at
+
+      unique %i[department_id name_secure]
     end
   end
 end

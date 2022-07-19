@@ -10,7 +10,7 @@ Sequel.migration do
       # foreign_key :project_id, table: :projects
       foreign_key :submitter_id, table: :accounts
       # foreign_key :assignee_id, table: :accounts
-
+      String      :ticket_number, null: false, unique: true
       String      :type, null: false
       String      :priority, null: false
       String      :status, null: false, default: 'Waiting'
@@ -22,7 +22,7 @@ Sequel.migration do
       DateTime    :updated_at
 
       # To think that through
-      unique %i[project_id description_secure title_secure]
+      unique %i[description_secure title_secure]
     end
   end
 end

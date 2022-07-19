@@ -7,9 +7,11 @@ require_relative './password'
 module TrackIt
   # Models a registered account
   class Account < Sequel::Model
-    one_to_many         :owned_organizations, class: :'TrackIt::Organization', key: :owner_id
     one_to_many         :submitted_comments, class: :'TrackIt::Comment', key: :commenter_id
     one_to_many         :submitted_issues, class: :'TrackIt::Issue', key: :submitter_id
+    one_to_many         :owned_organizations, class: :'TrackIt::Organization', key: :owner_id
+
+    many_to_one         :organization
 
     many_to_many        :teams,
                         class: :'TrackIt::Department',
@@ -52,9 +54,9 @@ module TrackIt
                         assigned_issues: :nullify
 
     plugin              :whitelist_security
-    set_allowed_columns :first_name, :last_name, :email, :password, :role, :picture
-
     plugin              :timestamps, update_on_create: true
+
+    set_allowed_columns :first_name, :last_name, :email, :password, :role, :picture
 
     def password=(new_password)
       self.password_digest = Password.digest(new_password)
@@ -70,7 +72,8 @@ module TrackIt
         {
           type: 'account',
           id:,
-          username:,
+          first_name:,
+          last_name:,
           email:,
           role:,
           picture:
