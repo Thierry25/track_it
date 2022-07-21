@@ -30,10 +30,10 @@ module TrackIt
     plugin              :association_dependencies,
                         comments: :nullify,
                         assignees: :nullify,
-                        related_issues: :nullify
+                        related_projects: :nullify
     # submitters: :nullify
 
-    set_allowed_columns :ticket_number, :type, :priority, :status, :description, :title
+    set_allowed_columns :ticket_number, :type, :priority, :status, :description, :title, :completed
 
     # Secure getters and setters
     def description
@@ -64,7 +64,8 @@ module TrackIt
               priority:,
               status:,
               description:,
-              title:
+              title:,
+              completed:
             }
           }
           # },

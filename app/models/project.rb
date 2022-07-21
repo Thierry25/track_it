@@ -45,18 +45,10 @@ module TrackIt
                         parent_organizations: :nullify,
                         issues: :nullify
 
-    set_allowed_columns :name, :description, :url,
-                        # :deadline
+    set_allowed_columns :name, :description, :url
+    # :deadline
 
-                        # Secure getters and setters
-                        def name
-                          SecureDB.decrypt(name_secure)
-                        end
-
-    def name=(plaintext)
-      self.name_secure = SecureDB.encrypt(plaintext)
-    end
-
+    # Secure getters and setters
     def description
       SecureDB.decrypt(description_secure)
     end
@@ -65,13 +57,13 @@ module TrackIt
       self.description_secure = SecureDB.encrypt(plaintext)
     end
 
-    # def deadline
-    #   SecureDb.decrypt(deadline_secure)
-    # end
+    def url
+      SecureDb.decrypt(url_secure)
+    end
 
-    # def deadline=(plaintext)
-    #   self.deadline_secure = SecureDB.encrypt(plaintext)
-    # end
+    def url=(plaintext)
+      self.url_secure = SecureDB.encrypt(plaintext)
+    end
 
     # rubocop:disable Metrics/MethodLength
     def to_json(options = {})

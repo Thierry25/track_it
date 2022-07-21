@@ -7,7 +7,7 @@ module TrackIt
   # Models an organization
   class Organization < Sequel::Model
     one_to_many         :departments
-    one_to_many         :employees
+    one_to_many         :employees, class: :'TrackIt::Account', key: :employer_id
 
     many_to_one         :owner, class: :'TrackIt::Account'
 
@@ -39,7 +39,7 @@ module TrackIt
       end
     end
 
-    set_allowed_columns :name, :logo, :country, :identidier
+    set_allowed_columns :name, :logo, :country, :identifier
 
     plugin              :timestamps, update_on_create: true
 

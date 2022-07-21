@@ -28,10 +28,10 @@ module TrackIt
                         join_table: :accounts_projects_collab,
                         left_key: :collaborator_id, right_key: :project_id
 
-    many_to_many        :positions,
-                        class: :'TrackIt::Organization',
-                        join_table: :accounts_organizations,
-                        left_key: :employee_id, right_key: :employer_id
+    # many_to_many        :positions,
+    #                     class: :'TrackIt::Organization',
+    #                     join_table: :accounts_organizations,
+    #                     left_key: :employee_id, right_key: :employer_id
 
     # many_to_many        :submitted_issues,
     #                     class: :'TrackIt::Issue',
@@ -50,7 +50,6 @@ module TrackIt
                         teams: :nullify,
                         managed_projects: :nullify,
                         collaborations: :nullify,
-                        positions: :nullify,
                         assigned_issues: :nullify
 
     plugin              :whitelist_security

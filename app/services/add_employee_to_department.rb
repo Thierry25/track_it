@@ -8,7 +8,7 @@ module TrackIt
       def message = 'Owner cannot be employee in a department'
     end
 
-    def self_call(department_id:, email:)
+    def self.call(department_id:, email:)
       employee = Account.first(email:)
       department = Department.first(id: department_id)
       raise(OwnerNotEmployeeError) if department.organization.owner.id == employee.id

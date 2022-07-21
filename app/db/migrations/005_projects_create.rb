@@ -9,15 +9,15 @@ Sequel.migration do
 
       foreign_key :department_id, table: :departments
 
-      String      :name_secure, null: false
+      String      :name, null: false
       String      :description_secure, null: false
       # DateTime    :deadline_secure, null: false
-      String      :url
+      String      :url_secure
 
       DateTime    :created_at
       DateTime    :updated_at
 
-      unique %i[department_id name_secure]
+      unique %i[department_id name]
     end
   end
 end

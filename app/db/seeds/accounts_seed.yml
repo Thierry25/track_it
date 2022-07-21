@@ -3,10 +3,12 @@
   last_name: Marcelin
   email: marcelinthierry@gmail.com
   password: daniel
+  role: super
 - first_name: Elon
   last_name: Musk
   email: elonmusk@gmail.com
   password: elon
+  role: super
 - first_name: Soumya
   last_name: Ray
   email: soumya.ray@gmail.com

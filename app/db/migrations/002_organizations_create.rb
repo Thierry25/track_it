@@ -18,8 +18,8 @@ Sequel.migration do
     end
 
     alter_table(:accounts) do
-      add_foreign_key :organization_id, :organizations
-      add_unique_constraint %i[organization_id email]
+      add_foreign_key :employer_id, :organizations
+      add_unique_constraint %i[employer_id email]
     end
   end
 end

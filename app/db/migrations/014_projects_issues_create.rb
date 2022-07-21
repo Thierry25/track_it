@@ -4,6 +4,12 @@ require 'sequel'
 
 Sequel.migration do
   change do
-    create_join_table(project_id: :projects, issue_id: :issues)
+    create_table(:projects_issues) do
+      primary_key %i[project_id issue_id]
+      foreign_key :project_id, :projects
+      foreign_key :issue_id, :issues
+
+      index %i[project_id issue_id]
+    end
   end
 end

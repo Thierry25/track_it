@@ -11,10 +11,12 @@
 - team_name: HR
   employee_email:
     - lionel.messi@gmail.com
-    - elonmusk@gmail.com
-    - odiceloud99@gmail.com
+    - neymar@gmail.com
+    - luka@gmail.com
+    - cristiano.ronaldo@gmail.com
 - team_name: SO
   employee_email:
-    - marcelinthierry@gmail.com
-    - elonmusk@gmail.com
     - cristiano.ronaldo@gmail.com
+    - odiceloud99@gmail.com
+    - luka@gmail.com
+    - gianis@gmail.com
