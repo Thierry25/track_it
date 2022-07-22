@@ -26,9 +26,13 @@ module TrackIt
     def to_json(options = {})
       JSON(
         {
-          type: 'department',
-          id:,
-          name:
+          data: {
+            type: 'department',
+            attributes: {
+              id:,
+              name:
+            }
+          }
         }, options
       )
     end

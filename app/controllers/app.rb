@@ -21,7 +21,7 @@ module TrackIt
           routing.on String do |email|
             # GET api/v1/accounts/[email]
             routing.get do
-              account = Account.first(email:)
+              account = Account.find(email:)
               account ? account.to_json : raise('Account not found')
             rescue StandardError
               routing.halt 404, { message: error.message }.to_json
@@ -32,6 +32,7 @@ module TrackIt
         routing.on 'super' do
           routing.on('accounts') do
             @account_route = "#{@api_root}/super/accounts"
+
             # POST api/v1/super/accounts
             routing.post do
               new_data = JSON.parse(routing.body.read)
@@ -45,6 +46,7 @@ module TrackIt
               }
 
               organization_data = {
+                identifier: new_data['identifier'],
                 name: new_data['name'],
                 logo: new_data['logo'],
                 country: new_data['country']
@@ -58,9 +60,13 @@ module TrackIt
                 new_account.delete
                 raise 'Could not save organization'
               end
+
               response.status = 201
-              response['Location'] = "#{@organization_route}/#{new_organization.id}"
-              { message: 'Organization created', data: new_organization }.to_json
+              response['Location'] = "#{@account_route}/#{new_account.id}/organizations/#{new_organization.id}"
+
+              { message: 'Organization and account created', org: new_organization, acc: new_account }.to_json
+              # binding.pry
+
             rescue Sequel::MassAssignmentRestriction
               Api.logger.warn "MASS-ASSIGNMENT:: #{account_data.keys}"
               routing.halt 400, { message: 'Illegal Request' }.to_json
@@ -84,8 +90,8 @@ module TrackIt
                   department = Department.where(organization_id:, id: department_id).first
                   department ? department.to_json : raise('Department not found')
 
-                rescue StandardError
-                  routing.halt 404, { message: error.message }.to_json
+                rescue StandardError => e
+                  routing.halt 404, { message: e.message }.to_json
                 end
 
                 routing.on('accounts') do
@@ -93,12 +99,14 @@ module TrackIt
                     routing.is do
                       # GET api/v1/organizations/[org..ID]/departments/[dep..ID]/accounts/[accont_EM]
                       routing.get do
-                        account = Account.first(email:)
+                        account = Account.where(organization_id:, email:).first
                         account ? account.to_json : raise('Account not found')
 
                       rescue StandardError => e
                         routing.halt 404, { message: e.message }.to_json
                       end
+
+                      # POST
                     end
                   end
                   # GET api/v1/organizations/[org..ID]/departments/[dep..ID]/accounts
@@ -258,21 +266,21 @@ module TrackIt
               organization = Organization.first(id: organization_id)
               organization ? organization.to_json : raise('Organization not found')
 
-            rescue StandardError
-              routing.halt 404, { message: error.message }.to_json
+            rescue StandardError => e
+              routing.halt 404, { message: e.message }.to_json
             end
           end
 
           # GET api/v1/organizations
           # Will return a list of organizations
-          # routing.is do
-          #   routing.get do
-          #     output = { data: Organization.all }
-          #     JSON.pretty_generate(output)
-          #   rescue StandardError
-          #     routing.halt 404, { message: 'Could not find organizations' }.to_json
-          #   end
-          # end
+          routing.is do
+            routing.get do
+              output = { data: Organization.all }
+              JSON.pretty_generate(output)
+            rescue StandardError
+              routing.halt 404, { message: 'Could not find organizations' }.to_json
+            end
+          end
         end
       end
     end

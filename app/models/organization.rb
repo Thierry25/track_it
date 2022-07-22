@@ -7,7 +7,7 @@ module TrackIt
   # Models an organization
   class Organization < Sequel::Model
     one_to_many         :departments
-    one_to_many         :employees, class: :'TrackIt::Account', key: :employer_id
+    # one_to_many         :employees, class: :'TrackIt::Account', key: :employer_id
 
     many_to_one         :owner, class: :'TrackIt::Account'
 
@@ -16,10 +16,10 @@ module TrackIt
                         join_table: :organizations_projects,
                         left_key: :organization_id, right_key: :project_id
 
-    # many_to_many        :employees,
-    #                     class: :'TrackIt::Account',
-    #                     join_table: :accounts_organizations,
-    #                     left_key: :employer_id, right_key: :employee_id
+    many_to_many        :employees,
+                        class: :'TrackIt::Account',
+                        join_table: :accounts_organizations,
+                        left_key: :employer_id, right_key: :employee_id
 
     plugin              :association_dependencies,
                         departments: :destroy,
@@ -29,7 +29,7 @@ module TrackIt
     plugin              :whitelist_security
     plugin              :association_dependencies,
                         departments: :destroy,
-                        employees: :destroy,
+                        employees: :nullify,
                         projects: :nullify
     # employees: :nullify
 
@@ -46,12 +46,16 @@ module TrackIt
     def to_json(options = {})
       JSON(
         {
-          type: 'organization',
-          id:,
-          name:,
-          logo:,
-          country:,
-          identifier:
+          data: {
+            type: 'organization',
+            attributes: {
+              id:,
+              name:,
+              logo:,
+              country:,
+              identifier:
+            }
+          }
         }, options
       )
     end

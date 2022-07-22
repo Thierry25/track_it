@@ -11,9 +11,10 @@ Sequel.migration do
       # String :username, null: false, unique: true
       String      :first_name, null: false
       String      :last_name, null: false
+      String      :username, null: false, unique: true
       String      :email, null: false
       String      :password_digest
-      String      :role, null: false, default: 'super'
+      # String      :role, null: false, default: 'super'
       String      :picture
 
       DateTime    :created_at

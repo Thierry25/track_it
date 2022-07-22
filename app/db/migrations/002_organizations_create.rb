@@ -17,9 +17,9 @@ Sequel.migration do
       DateTime    :updated_at
     end
 
-    alter_table(:accounts) do
-      add_foreign_key :employer_id, :organizations
-      add_unique_constraint %i[employer_id email]
-    end
+    # alter_table(:accounts) do
+    #   add_foreign_key :employer_id, :organizations
+    #   add_unique_constraint %i[employer_id email]
+    # end
   end
 end
