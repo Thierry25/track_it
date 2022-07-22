@@ -16,7 +16,6 @@ describe 'Test Account Handling' do
     _(account.first_name).must_equal 'Daniel Thierry'
     _(account.last_name).must_equal 'Marcelin'
     _(account.email).must_equal 'marcelinthierry@gmail.com'
-    _(account.password).must_equal 'daniel'
     _(account.role).must_equal 'super'
   end
 end

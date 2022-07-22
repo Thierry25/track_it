@@ -18,10 +18,10 @@ def wipe_database
 end
 
 DATA = {
-  accounts: YAML.load_file(File.read('app/db/seeds/accounts_seed.yml')),
-  organizations: YAML.load_file(File.read('app/db/seeds/organizations_seed.yml')),
-  departments: YAML.load_file(File.read('app/db/seeds/departments_seed.yml')),
-  projects: YAML.load_file(File.read('app/db/seeds/projects_seed.yml')),
-  issues: YAML.load_file(File.read('app/db/seeds/issues_seed.yml')),
-  comments: YAML.load_file(File.read('app/db/seeds/comments_seed.yml'))
-}
+  accounts: YAML.load(File.read('app/db/seeds/accounts_seed.yml')),
+  organizations: YAML.load(File.read('app/db/seeds/organizations_seed.yml')),
+  departments: YAML.load(File.read('app/db/seeds/departments_seed.yml')),
+  projects: YAML.load(File.read('app/db/seeds/projects_seed.yml')),
+  issues: YAML.load(File.read('app/db/seeds/issues_seed.yml')),
+  comments: YAML.load(File.read('app/db/seeds/comments_seed.yml'))
+}.freeze

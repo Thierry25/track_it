@@ -58,7 +58,7 @@ module TrackIt
     end
 
     def url
-      SecureDb.decrypt(url_secure)
+      SecureDB.decrypt(url_secure)
     end
 
     def url=(plaintext)
