@@ -12,7 +12,7 @@ module TrackIt
       collaborator = Account.first(email:)
       project = Project.first(id: project_id)
 
-      raise(AccountNotCollaborator) if collaborator.role != 'se' && collaborator.role != 'tester'
+      # raise(AccountNotCollaborator) if collaborator.role != 'se' && collaborator.role != 'tester'
 
       project.add_collaborator(collaborator)
     end

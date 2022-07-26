@@ -7,7 +7,7 @@ describe 'Test Organization Handling' do
     wipe_database
 
     DATA[:accounts].each do |account_data|
-      TrackIt::Account.create(account_data) if account_data['role'] == 'super'
+      TrackIt::Account.create(account_data)
     end
   end
 

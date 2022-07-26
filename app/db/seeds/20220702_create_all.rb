@@ -3,11 +3,10 @@
 Sequel.seed(:development) do
   def run
     puts 'Seeding accounts, organizations, departments, projects, issues and comments'
-    create_super_accounts
+    create_accounts
     create_owned_organizations
     create_departments
     create_projects
-    create_accounts
     create_issues
     create_comments
     # many_to_many
@@ -47,15 +46,15 @@ PROJ_ISSUE_INFO = YAML.load_file("#{DIR}/projects_issues.yml")
 COMMENT_SUBMITTER_INFO = YAML.load_file("#{DIR}/submitters_comments.yml")
 ISSUE_SUBMITTER_INFO = YAML.load_file("#{DIR}/submitters_issues.yml")
 
-def create_super_accounts
-  ACCOUNTS_INFO.each do |account_info|
-    TrackIt::Account.create(account_info) if account_info['role'] == 'super'
+def create_accounts
+  ACCOUNTS_INFO.each do |account_data|
+    TrackIt::Account.create(account_data)
   end
 end
 
 def create_owned_organizations
   OWNERS_INFO.each do |owner|
-    account = TrackIt::Account.first(email: owner['email'])
+    account = TrackIt::Account.first(username: owner['username'])
     owner['organization_name'].each do |org_name|
       organization_data = ORGANIZATIONS_INFO.find { |org| org['name'] == org_name }
       TrackIt::CreateOrganizationForOwner.call(
@@ -84,18 +83,6 @@ def create_projects
       project_data = PROJ_INFO.find { |proj| proj['name'] == project }
       TrackIt::CreateProjectForDepartment.call(
         department_id: department.id, project_data:
-      )
-    end
-  end
-end
-
-def create_accounts
-  EMPLOYEE_ORG_INFO.each do |org_info|
-    organization = TrackIt::Organization.first(name: org_info['organization_name'])
-    org_info['employee_email'].each do |account|
-      account_data = ACCOUNTS_INFO.find { |acc| acc['email'] == account }
-      TrackIt::CreateEmployeeForOrganization.call(
-        organization_id: organization.id, account_data:
       )
     end
   end
@@ -162,10 +149,11 @@ end
 
 def add_employees_to_department
   EMPLOYEE_INFO.each do |emp|
+    # binding.pry
     department = TrackIt::Department.first(name: emp['team_name'])
-    emp['employee_email'].each do |email|
+    emp['data'].each do |data|
       TrackIt::AddEmployeeToDepartment.call(
-        department_id: department.id, email:
+        department_id: department.id, email: data['email'], role_id: data['role_id']
       )
     end
   end

@@ -1,22 +1,37 @@
 ---
 - team_name: IT
-  employee_email:
-    - soumya.ray@gmail.com
-    - stephen.curry@outlook.com
-    - odiceloud99@gmail.com
-    - gianis@gmail.com
-    - luka@gmail.com
-    - neymar@gmail.com
-    - fabricemarcelin@gmail.com
+  data:
+    - email: soumya.ray@gmail.com
+      role_id: 1
+    - email: stephen.curry@outlook.com
+      role_id: 2
+    - email: odiceloud99@gmail.com
+      role_id: 3
+    - email: gianis@gmail.com
+      role_id: 2
+    - email: luka@gmail.com
+      role_id: 4
+    - email: neymar@gmail.com
+      role_id: 2
+    - email: fabricemarcelin@gmail.com
+      role_id: 3
 - team_name: HR
-  employee_email:
-    - lionel.messi@gmail.com
-    - neymar@gmail.com
-    - luka@gmail.com
-    - cristiano.ronaldo@gmail.com
+  data:
+    - email: lionel.messi@gmail.com
+      role_id: 1
+    - email: neymar@gmail.com
+      role_id: 2
+    - email: luka@gmail.com
+      role_id: 2
+    - email: cristiano.ronaldo@gmail.com
+      role_id: 3
 - team_name: SO
-  employee_email:
-    - cristiano.ronaldo@gmail.com
-    - odiceloud99@gmail.com
-    - luka@gmail.com
-    - gianis@gmail.com
+  data:
+    - email: cristiano.ronaldo@gmail.com
+      role_id: 2
+    - email: odiceloud99@gmail.com
+      role_id: 2
+    - email: luka@gmail.com
+      role_id: 1
+    - email: gianis@gmail.com
+      role_id: 4

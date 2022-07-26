@@ -2,70 +2,70 @@
 - first_name: Daniel Thierry
   last_name: Marcelin
   email: marcelinthierry@gmail.com
+  username: daniel.marcelin
   password: daniel
-  role: super
 - first_name: Elon
   last_name: Musk
   email: elonmusk@gmail.com
+  username: elon.musk
   password: elon
-  role: super
 - first_name: Soumya
   last_name: Ray
   email: soumya.ray@gmail.com
-  role: admin
+  username: soumya.ray
   password: soumya
 - first_name: Charles
   last_name: Barkley
   email: charles.barkley@gmail.com
-  role: admin
+  username: charles.barkley
   password: soumya
 - first_name: Stephen
   last_name: Curry
   email: stephen.curry@outlook.com
-  role: project_manager
+  username: stephen.curry
   password: stephen
 - first_name: Lebron
   last_name: James
   email: lebron.james@gmail.com
-  role: project_manager
+  username: lebron.james
   password: andre
 - first_name: Kevin
   last_name: Durant
   email: kevin.durant@outlook.com
-  role: project_manager
+  username: kevin.durant
   password: jordan
 - first_name: Loudwige
   last_name: Odice
   email: odiceloud99@gmail.com
-  role: se
+  username: odice.loudwige
   password: loudwige
 - first_name: Giannis
   last_name: Antetokoumpo
   email: gianis@gmail.com
-  role: se
+  username: giannis.antetokoumpo
   password: giannis
 - first_name: Luka
   last_name: Doncic
   email: luka@gmail.com
-  role: se
+  username: luka.doncic
   password: luka
 - first_name: Neymar
   last_name: Da Silva
   email: neymar@gmail.com
-  role: se
+  username: neymar.dasilva
   password: neymar
 - first_name: Lionel
   last_name: Messi
   email: lionel.messi@gmail.com
-  role: se
+  username: lionel.messi
   password: lionel
 - first_name: Cristiano
   last_name: Ronaldo
   email: cristiano.ronaldo@gmail.com
-  role: se
+  username: cristiano.ronaldo
   password: cristiano
 - first_name: Fabrice
   last_name: Marcelin
   email: fabricemarcelin@gmail.com
-  role: tester
+  username: fabrice.marcelin
   password: fabrice

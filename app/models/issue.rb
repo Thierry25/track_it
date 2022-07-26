@@ -7,7 +7,7 @@ module TrackIt
   # Models a secret issue
   class Issue < Sequel::Model
     # many_to_one         :project
-    many_to_one         :submitter
+    many_to_one         :submitter, class: :'TrackIt::Account'
 
     many_to_many        :assignees,
                         class: :'TrackIt::Account',
@@ -60,6 +60,7 @@ module TrackIt
             type: 'issue',
             attributes: {
               id:,
+              ticket_number:,
               type:,
               priority:,
               status:,
@@ -67,11 +68,10 @@ module TrackIt
               title:,
               completed:
             }
+          },
+          included: {
+            submitter:
           }
-          # },
-          # included: {
-          #   project:
-          # }
         }, options
       )
     end

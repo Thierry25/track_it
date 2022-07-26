@@ -16,27 +16,40 @@ module TrackIt
                         join_table: :organizations_projects,
                         left_key: :organization_id, right_key: :project_id
 
-    many_to_many        :employees,
-                        class: :'TrackIt::Account',
-                        join_table: :accounts_organizations,
-                        left_key: :employer_id, right_key: :employee_id
+    # many_to_many        :employees,
+    #                     class: :'TrackIt::Account',
+    #                     join_table: :accounts_organizations,
+    #                     left_key: :employer_id, right_key: :employee_id
 
     plugin              :association_dependencies,
                         departments: :destroy,
-                        projects: :nullify,
-                        employees: :nullify
+                        projects: :nullify
+    # employees: :nullify
 
     plugin              :whitelist_security
     plugin              :association_dependencies,
                         departments: :destroy,
-                        employees: :nullify,
                         projects: :nullify
     # employees: :nullify
 
     def projects
-      departments.map do |department|
-        department.projects.all
+      projs = []
+      departments.each do |department|
+        department.projects.each do |proj|
+          projs.append(proj)
+        end
       end
+      projs
+    end
+
+    def employees
+      emps = []
+      departments.each do |department|
+        department.employees.each do |emp|
+          emps.append(emp)
+        end
+      end
+      emps
     end
 
     set_allowed_columns :name, :logo, :country, :identifier

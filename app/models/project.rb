@@ -7,6 +7,7 @@ module TrackIt
   # Models a project
   class Project < Sequel::Model
     many_to_one         :department, class: :'TrackIt::Department'
+    # one_to_many         :issues, class: :'TrackIt::Issue'
 
     many_to_many        :collaborators,
                         class: :'TrackIt::Account',
