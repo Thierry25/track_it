@@ -19,7 +19,7 @@ module TrackIt
                         join_table: :issues_comments,
                         left_key: :issue_id, right_key: :comment_id
 
-    many_to_many        :related_projects,
+    many_to_many        :projects,
                         class: :'TrackIt::Project',
                         join_table: :projects_issues,
                         left_key: :issue_id, right_key: :project_id
@@ -30,7 +30,7 @@ module TrackIt
     plugin              :association_dependencies,
                         comments: :nullify,
                         assignees: :nullify,
-                        related_projects: :nullify
+                        projects: :nullify
     # submitters: :nullify
 
     set_allowed_columns :ticket_number, :type, :priority, :status, :description, :title, :completed

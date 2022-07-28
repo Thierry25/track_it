@@ -130,7 +130,7 @@ def add_collaborators
     project = TrackIt::Project.first(name: contrib['proj_name'])
     contrib['collaborator_email'].each do |email|
       TrackIt::AddCollaboratorToProject.call(
-        email:, project_id: project.id
+        project_id: project.id, email:
       )
     end
   end
@@ -139,9 +139,10 @@ end
 def add_assigned_issues
   ASSIGN_INFO.each do |assign|
     issue = TrackIt::Issue.first(ticket_number: assign['ticket_number'])
+    dp = TrackIt::Department.first(name: assign['department_name'])
     assign['assignee_email'].each do |email|
       TrackIt::AssignIssueToAccount.call(
-        issue_id: issue.id, email:
+        issue_id: issue.id, email:, department_id: dp.id
       )
     end
   end

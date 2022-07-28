@@ -15,7 +15,13 @@ module TrackIt
     many_to_many        :teams,
                         class: :'TrackIt::Department',
                         join_table: :accounts_departments,
-                        left_key: :employee_id, right_key: :department_id
+                        left_key: :employee_id, right_key: :department_id,
+                        select: [Sequel[:departments].*, Sequel[:accounts_departments][:role_id]]
+
+    # many_to_many        :roles,
+    #                     class: :'TrackIt::Role',
+    #                     join_table: :accounts_departments,
+    #                     left_key: :employee_id, right_key: :role_id
 
     many_to_many        :managed_projects,
                         class: :'TrackIt::Project',

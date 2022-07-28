@@ -13,7 +13,8 @@ module TrackIt
     many_to_many        :employees,
                         class: :'TrackIt::Account',
                         join_table: :accounts_departments,
-                        left_key: :department_id, right_key: :employee_id
+                        left_key: :department_id, right_key: :employee_id,
+                        select: [Sequel[:accounts].*, Sequel[:accounts_departments][:role_id]]
 
     plugin              :timestamps, update_on_create: true
     plugin              :whitelist_security
