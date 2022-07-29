@@ -39,6 +39,10 @@ gem 'rerun'
 # Quality
 gem 'rubocop'
 
+# Coverage
+gem 'simplecov'
+
+
 # # Validation
 # gem 'dry-struct', '~> 1.4'
 # gem 'dry-types', '~> 1.5'
