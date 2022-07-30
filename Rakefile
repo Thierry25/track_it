@@ -32,7 +32,7 @@ task :audit do
 end
 
 desc 'Checks for release'
-task release?: %i[spec style audit] do
+task release: %i[spec style audit] do
   puts "\nReady for release!"
 end
 
@@ -60,8 +60,7 @@ namespace :db do
 
   desc 'Delete database'
   task :delete do
-    app.DB[:issues].delete
-    app.DB[:projects].delete
+    TrackIt::Account.dataset.destroy
   end
 
   desc 'Delete dev or test database file'
@@ -102,5 +101,13 @@ namespace :newkey do
   task :db do
     require_app('lib')
     puts "DB_KEY: #{SecureDB.generate_key}"
+  end
+end
+
+namespace :run do
+  # Run in development mode
+  desc 'Run API in development mode'
+  task :dev do
+    sh 'rackup -p 3000'
   end
 end

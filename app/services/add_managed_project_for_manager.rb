@@ -13,6 +13,7 @@ module TrackIt
       project = Project.first(id: project_id)
       department = project.department
 
+      # binding.pry
       raise(AccountNotProjectManagerError) if owner?(manager,
                                                      department) || !employee?(manager,
                                                                                department) || role?(
@@ -23,7 +24,7 @@ module TrackIt
     end
 
     def self.owner?(manager, department)
-      return true if department.organization.owner.id == manager.id
+      department.organization.owner.id == manager.id
     end
 
     def self.employee?(manager, department)

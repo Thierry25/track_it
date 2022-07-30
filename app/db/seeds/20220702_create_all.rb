@@ -10,10 +10,10 @@ Sequel.seed(:development) do
     create_issues
     create_comments
     # many_to_many
+    add_employees_to_department
     add_managed_projects
     add_collaborators
     add_assigned_issues
-    add_employees_to_department
     add_issues_to_project
     add_comments_to_issue
     add_comments_to_project
@@ -114,6 +114,18 @@ def create_comments
   end
 end
 
+def add_employees_to_department
+  EMPLOYEE_INFO.each do |emp|
+    # binding.pry
+    department = TrackIt::Department.first(name: emp['team_name'])
+    emp['data'].each do |data|
+      TrackIt::AddEmployeeToDepartment.call(
+        department_id: department.id, email: data['email'], role_id: data['role_id']
+      )
+    end
+  end
+end
+
 def add_managed_projects
   MANAGER_INFO.each do |management|
     project = TrackIt::Project.first(name: management['proj_name'])
@@ -129,6 +141,7 @@ def add_collaborators
   CONTRIB_INFO.each do |contrib|
     project = TrackIt::Project.first(name: contrib['proj_name'])
     contrib['collaborator_email'].each do |email|
+      # binding.pry
       TrackIt::AddCollaboratorToProject.call(
         project_id: project.id, email:
       )
@@ -143,18 +156,6 @@ def add_assigned_issues
     assign['assignee_email'].each do |email|
       TrackIt::AssignIssueToAccount.call(
         issue_id: issue.id, email:, department_id: dp.id
-      )
-    end
-  end
-end
-
-def add_employees_to_department
-  EMPLOYEE_INFO.each do |emp|
-    # binding.pry
-    department = TrackIt::Department.first(name: emp['team_name'])
-    emp['data'].each do |data|
-      TrackIt::AddEmployeeToDepartment.call(
-        department_id: department.id, email: data['email'], role_id: data['role_id']
       )
     end
   end

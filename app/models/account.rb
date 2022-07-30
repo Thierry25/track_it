@@ -70,12 +70,13 @@ module TrackIt
       JSON(
         {
           type: 'account',
-          id:,
-          username:,
-          first_name:,
-          last_name:,
-          email:,
-          picture:
+          attributes: {
+            username:,
+            first_name:,
+            last_name:,
+            email:,
+            picture:
+          }
         }, options
       )
     end
