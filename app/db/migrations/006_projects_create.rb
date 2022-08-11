@@ -5,7 +5,7 @@ require 'sequel'
 Sequel.migration do
   change do
     create_table(:projects) do
-      uuid        :id, primary_key: true
+      primary_key :id
 
       foreign_key :department_id, table: :departments
 

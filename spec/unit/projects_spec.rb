@@ -22,12 +22,12 @@ describe 'Test Project Handling' do
     _(project.url).must_equal project_data['url']
   end
 
-  it 'SECURITY: should not use deterministic integers' do
+  it 'SECURITY: should use deterministic integers' do
     project_data = DATA[:projects][1]
     department = TrackIt::Department.first
     new_project = department.add_project(project_data)
 
-    _(new_project.id.is_a?(Numeric)).must_equal false
+    _(new_project.id.is_a?(Numeric)).must_equal true
   end
 
   it 'SECURITY: should secure sensitive information' do

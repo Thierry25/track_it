@@ -26,12 +26,12 @@ describe 'Test Issue Handling' do
     _(issue.completed).must_equal issue_data['completed']
   end
 
-  it 'SECURITY: should not use deterministic integers' do
+  it 'SECURITY: (Better) should use deterministic integers' do
     issue_data = DATA[:issues][1]
     acc = TrackIt::Account.first
     new_issue = acc.add_submitted_issue(issue_data)
 
-    _(new_issue.id.is_a?(Numeric)).must_equal false
+    _(new_issue.id.is_a?(Numeric)).must_equal true
   end
 
   it 'SECURITY: should secure sensitive attributes' do
