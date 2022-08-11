@@ -81,7 +81,8 @@ module TrackIt
             linkedin:,
             twitter:,
             instagram:,
-            youtube:
+            youtube:,
+            created_at:
           }
         }, options
       )
