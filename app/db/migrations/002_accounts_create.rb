@@ -22,6 +22,11 @@ Sequel.migration do
       String      :email, null: false, unique: true
       String      :password_digest
       String      :picture
+      String      :biography
+      String      :linkedin
+      String      :youtube
+      String      :twitter
+      String      :instagram
 
       DateTime    :created_at
       DateTime    :updated_at

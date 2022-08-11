@@ -55,7 +55,8 @@ module TrackIt
     plugin              :whitelist_security
     plugin              :timestamps, update_on_create: true
 
-    set_allowed_columns :first_name, :last_name, :email, :username, :password, :picture
+    set_allowed_columns :first_name, :last_name, :email, :username, :password, :picture, :biography, :linkedin,
+                        :instagram, :twitter, :youtube
 
     def password=(new_password)
       self.password_digest = Password.digest(new_password)
@@ -75,7 +76,13 @@ module TrackIt
             first_name:,
             last_name:,
             email:,
-            picture:
+            picture:,
+            biography:,
+            linkedin:,
+            twitter:,
+            instagram:,
+            youtube:,
+            created_at:
           }
         }, options
       )

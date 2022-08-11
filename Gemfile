@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
+ruby File.read('.ruby-version').strip
 
 # Web API
 gem 'json'
@@ -19,14 +20,19 @@ gem 'rbnacl', '~>7'
 gem 'hirb'
 gem 'sequel', '~>5'
 
+group :production do
+  gem 'pg'
+end
+
 # Testing
 group :test do
   gem 'minitest'
   gem 'minitest-rg'
 end
 
+gem 'pry'
+
 group :development do
-  gem 'pry'
   gem 'rerun'
   gem 'rubocop'
   gem 'rubocop-performance'
