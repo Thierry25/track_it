@@ -5,3 +5,4 @@ app/db/store/*.db
 config/secrets.yml
 coverage/*
 !coverage/.resultset.json
+!coverage/index.html
