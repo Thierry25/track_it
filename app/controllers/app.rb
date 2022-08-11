@@ -16,6 +16,9 @@ module TrackIt
     route do |routing|
       response['Content-Type'] = 'application/json'
 
+      secure_request?(routing) ||
+        routing.halt(403, { message: 'TLS/SSL Required' }.to_json)
+
       routing.root do
         { message: 'TrackItAPI up at /api/v1' }.to_json
       end
