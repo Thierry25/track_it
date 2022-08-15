@@ -4,7 +4,7 @@ require 'roda'
 require 'figaro'
 require 'logger'
 require 'sequel'
-require './app/lib/secure_db'
+require_app('lib')
 
 module TrackIt
   # Configuration for the API
@@ -32,6 +32,7 @@ module TrackIt
 
       # Load crypto keys
       SecureDB.setup(ENV.delete('DB_KEY'))
+      AuthToken.setup(ENV.fetch('MSG_KEY')) # Load crypto key
     end
     # rubocop:enable Lint/ConstantDefinitionInBlock
 
