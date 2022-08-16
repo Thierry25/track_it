@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/HashSyntax, Style/SymbolArray
 require 'rake/testtask'
 require './require_app'
 
-task default: :spec
+task :default => :spec
 
 desc 'Tests API specs only'
 task :api_spec do
@@ -22,7 +23,7 @@ task :respec do
 end
 
 desc 'Runs rubocop on tested code'
-task style: %i[spec audit] do
+task :style => [:spec, :audit] do
   sh 'rubocop .'
 end
 
@@ -32,40 +33,46 @@ task :audit do
 end
 
 desc 'Checks for release'
-task release: %i[spec style audit] do
+task :release => [:spec, :style, :audit] do
   puts "\nReady for release!"
 end
 
 task :print_env do
-  puts "Environment: #{ENV.fetch('RACK_ENV', 'development')}"
+  puts "Environment: #{ENV.fetch('RACK_ENV', nil) || 'development'}"
 end
 
 desc 'Run application console (pry)'
-task console: :print_env do
+task :console => :print_env do
   sh 'pry -r ./spec/test_load_all'
 end
 
 namespace :db do
-  require_app(nil) # loads config code files only
-  require 'sequel'
+  task :load do
+    require_app(nil) # loads config code files only
+    require 'sequel'
 
-  Sequel.extension :migration
-  app = TrackIt::Api
-
-  desc 'Run migrations'
-  task migrate: :print_env do
-    puts 'Migrating database to latest'
-    Sequel::Migrator.run(app.DB, 'app/db/migrations')
+    Sequel.extension :migration
+    @app = TrackIt::Api
   end
 
-  desc 'Delete database'
-  task :delete do
+  task :load_models => :load do
+    require_app(%w[lib models services])
+  end
+
+  desc 'Run migrations'
+  task :migrate => [:load, :print_env] do
+    puts 'Migrating database to latest'
+    Sequel::Migrator.run(@app.DB, 'app/db/migrations')
+  end
+
+  desc 'Destroy data in database; maintain tables'
+  task :delete => :load do
     TrackIt::Account.dataset.destroy
   end
 
   desc 'Delete dev or test database file'
-  task :drop do
-    if app.environment == :production
+  task :drop => :load do
+    if @app.environment == :production
       puts 'Cannot wipe production database!'
       return
     end
@@ -75,25 +82,21 @@ namespace :db do
     puts "Deleted #{db_filename}"
   end
 
-  task :load_models do
-    require_app(%w[lib models services])
-  end
-
-  task reset_seeds: [:load_models] do
-    app.DB[:schema_seeds].delete if app.DB.tables.include?(:schema_seeds)
+  task :reset_seeds => :load_models do
+    @app.DB[:schema_seeds].delete if @app.DB.tables.include?(:schema_seeds)
     TrackIt::Account.dataset.destroy
   end
 
   desc 'Seeds the development database'
-  task seed: [:load_models] do
+  task :seed => :load_models do
     require 'sequel/extensions/seed'
     Sequel::Seed.setup(:development)
     Sequel.extension :seed
-    Sequel::Seeder.apply(app.DB, 'app/db/seeds')
+    Sequel::Seeder.apply(@app.DB, 'app/db/seeds')
   end
 
   desc 'Delete all data and reseed'
-  task reseed: %i[reset_seeds seed]
+  task reseed: [:reset_seeds, :seed]
 end
 
 namespace :newkey do
@@ -101,6 +104,12 @@ namespace :newkey do
   task :db do
     require_app('lib')
     puts "DB_KEY: #{SecureDB.generate_key}"
+  end
+
+  desc 'Create sample cryptographic key for tokens and messaging'
+  task :msg do
+    require_app('lib')
+    puts "MSG_KEY: #{AuthToken.generate_key}"
   end
 end
 
@@ -111,3 +120,4 @@ namespace :run do
     sh 'rackup -p 3000'
   end
 end
+# rubocop:enable Style/HashSyntax, Style/SymbolArray

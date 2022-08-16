@@ -30,9 +30,11 @@ module TrackIt
     def to_json(options = {})
       JSON(
         {
-          type: 'comment',
-          id:,
-          content:
+          attributes: {
+            type: 'comment',
+            id:,
+            content:
+          }
         }, options
       )
     end

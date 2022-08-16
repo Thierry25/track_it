@@ -24,23 +24,29 @@ group :production do
   gem 'pg'
 end
 
+# External Services
+gem 'http'
+
 # Testing
 group :test do
   gem 'minitest'
   gem 'minitest-rg'
 end
 
+# Debugging
 gem 'pry'
+gem 'rack-test'
 
 group :development do
   gem 'rerun'
+
+   # Quality
   gem 'rubocop'
   gem 'rubocop-performance'
 
 end
 
 group :development, :test do
-  gem 'rack-test'
   gem 'sequel-seed'
   gem 'sqlite3'
 end

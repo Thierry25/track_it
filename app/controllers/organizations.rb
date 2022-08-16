@@ -27,7 +27,9 @@ module TrackIt
       # Will return a list of organizations
       routing.is do
         routing.get do
-          output = { data: Organization.all }
+          account = Account.first(username: @auth_account['username'])
+          organizations = account.owned_organizations
+          output = { data: organizations }
           JSON.pretty_generate(output)
         rescue StandardError
           routing.halt 404, { message: 'Could not find organizations' }.to_json

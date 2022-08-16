@@ -68,6 +68,9 @@ module TrackIt
 
     # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
+      #  include: {
+      #       project:
+      #     }
       JSON(
         {
           data: {

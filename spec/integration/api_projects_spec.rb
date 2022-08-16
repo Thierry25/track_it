@@ -25,6 +25,7 @@ describe 'Test Project Handling' do
         dep.add_project(project)
       end
 
+      header 'AUTHORIZATION', "Bearer #{auth[:attributes][:auth_token]}"
       get "api/v1/organizations/#{org.id}/departments/#{dep.id}/projects"
       _(last_response.status).must_equal 200
 
