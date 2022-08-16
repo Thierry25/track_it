@@ -9,9 +9,11 @@ module TrackIt
     def to_json(options = {})
       JSON(
         {
-          type: 'role',
-          id:,
-          role:
+          attributes: {
+            type: 'role',
+            id:,
+            role:
+          }
         }, options
       )
     end
