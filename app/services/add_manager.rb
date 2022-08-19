@@ -2,7 +2,7 @@
 
 module TrackIt
   # Service Object to add a project to the list of managed projects
-  class AddManagedProjectForManager
+  class AddManager
     # Cannot add this account as project manager
     class AccountNotProjectManagerError < StandardError
       def message = 'This account cannot be a project manager'

@@ -2,7 +2,7 @@
 
 module TrackIt
   # Service object to add collaborator to a project
-  class AddCollaboratorToProject
+  class AddCollaborator
     # Error Project Manager cannot be a collaborator
     class AccountNotCollaborator < StandardError
       def message = 'Account cannot be a collaborator'

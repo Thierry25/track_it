@@ -19,6 +19,7 @@ module TrackIt
                         join_table: :issues_comments,
                         left_key: :comment_id, right_key: :issue_id
 
+    plugin              :uuid, field: :id
     plugin              :timestamps, update_on_create: true
     plugin              :whitelist_security
     plugin              :association_dependencies,
@@ -35,6 +36,9 @@ module TrackIt
             id:,
             content:
           }
+          # included: {
+          #   submitter:
+          # }
         }, options
       )
     end

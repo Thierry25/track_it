@@ -2,7 +2,7 @@
 
 module TrackIt
   # Service object to add issue to a project
-  class AddIssueToProject
+  class AddIssue
     def self.call(project_id:, issue_id:)
       project = Project.first(id: project_id)
       issue = Issue.first(id: issue_id)

@@ -24,7 +24,7 @@ module TrackIt
                         join_table: :projects_issues,
                         left_key: :issue_id, right_key: :project_id
 
-    # plugin              :uuid, field: :id
+    plugin              :uuid, field: :id
     plugin              :timestamps
     plugin              :whitelist_security
     plugin              :association_dependencies,

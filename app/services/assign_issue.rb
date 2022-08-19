@@ -2,7 +2,7 @@
 
 module TrackIt
   # Service Object to assign a given issue to an account
-  class AssignIssueToAccount
+  class AssignIssue
     # Error for account that cannot be assigned any issues
     class AccountNotAssigneeError < StandardError
       def message = 'This account cannot be assigned an issue'
