@@ -12,9 +12,9 @@ module TrackIt
 
     def self.call(account:, department:, employee_email:)
       employee = Account.first(email: employee_email)
-      policy = AddRemoveRequestPolicy.new(department, account, employee)
+      policy = EmployeeRequestPolicy.new(department, account, employee)
 
-      raise ForbiddenError unless policy.can_remove_employee?
+      raise ForbiddenError unless policy.can_remove?
 
       department.remove_employee(employee)
       employee

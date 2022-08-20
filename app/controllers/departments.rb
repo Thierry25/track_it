@@ -94,15 +94,6 @@ module TrackIt
         end
       end
 
-      # GET api/v1/organizations/[organization_id]/departments
-      # routing.get do
-      #   organization = Organization.first(id: @organization_id)
-      #   output = { data: organization.departments }
-      #   JSON.pretty_generate(output)
-      # rescue StandardError
-      #   routing.halt 404, { message: 'Could not find departments' }.to_json
-      # end
-
       routing.post do
         # POST api/v1/organizations/[organization_ID]/departments
         new_department = CreateDepartment.call(

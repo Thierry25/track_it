@@ -56,21 +56,31 @@ module TrackIt
 
     plugin              :timestamps, update_on_create: true
 
-    def to_json(options = {})
-      JSON(
-        {
-          data: {
-            type: 'organization',
-            attributes: {
-              id:,
-              name:,
-              logo:,
-              country:,
-              identifier:
-            }
-          }
-        }, options
+    def to_h
+      {
+        type: 'organization',
+        attributes: {
+          id:,
+          name:,
+          logo:,
+          country:,
+          identifier:
+        }
+      }
+    end
+
+    def full_details
+      to_h.merge(
+        relationships: {
+          owner:,
+          departments:,
+          projects:
+        }
       )
+    end
+
+    def to_json(options = {})
+      JSON(to_h, options)
     end
   end
 end

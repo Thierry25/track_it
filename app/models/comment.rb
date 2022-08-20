@@ -28,19 +28,28 @@ module TrackIt
 
     set_allowed_columns :content
 
-    def to_json(options = {})
-      JSON(
-        {
-          attributes: {
-            type: 'comment',
-            id:,
-            content:
-          }
-          # included: {
-          #   submitter:
-          # }
-        }, options
+    def to_h
+      {
+        type: 'comment',
+        attributes: {
+          id:,
+          content:
+        }
+      }
+    end
+
+    def full_details
+      to_h.merge(
+        relationships: {
+          submitter:,
+          related_projects:,
+          related_issues:
+        }
       )
+    end
+
+    def to_json(options = {})
+      JSON(to_h, options)
     end
   end
 end

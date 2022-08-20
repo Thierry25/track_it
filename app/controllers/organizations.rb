@@ -20,7 +20,7 @@ module TrackIt
         # GET api/v1/organizations/[organization_ID]
         routing.get do
           organization = GetOrganizationQuery.call(
-            account: @auth_account, organization: @req_organization
+            requestor: @auth_account, organization: @req_organization
           )
 
           { data: organization }.to_json

@@ -18,11 +18,6 @@ module TrackIt
                         left_key: :employee_id, right_key: :department_id,
                         select: [Sequel[:departments].*, Sequel[:accounts_departments][:role_id]]
 
-    # many_to_many        :roles,
-    #                     class: :'TrackIt::Role',
-    #                     join_table: :accounts_departments,
-    #                     left_key: :employee_id, right_key: :role_id
-
     many_to_many        :managed_projects,
                         class: :'TrackIt::Project',
                         join_table: :accounts_projects,
@@ -32,11 +27,6 @@ module TrackIt
                         class: :'TrackIt::Project',
                         join_table: :accounts_projects_collab,
                         left_key: :collaborator_id, right_key: :project_id
-
-    # many_to_many        :submitted_issues,
-    #                     class: :'TrackIt::Issue',
-    #                     join_table: :accounts_submitted_issues,
-    #                     left_key: :submitter_id, right_key: :issue_id
 
     many_to_many        :assigned_issues,
                         class: :'TrackIt::Issue',
@@ -67,25 +57,41 @@ module TrackIt
       digest.correct?(try_password)
     end
 
-    def to_json(options = {})
-      JSON(
-        {
-          type: 'account',
-          attributes: {
-            username:,
-            first_name:,
-            last_name:,
-            email:,
-            picture:,
-            biography:,
-            linkedin:,
-            twitter:,
-            instagram:,
-            youtube:,
-            created_at:
-          }
-        }, options
+    def to_h
+      {
+        type: 'account',
+        attributes: {
+          username:,
+          first_name:,
+          last_name:,
+          email:,
+          picture:,
+          biography:,
+          linkedin:,
+          twitter:,
+          instagram:,
+          youtube:,
+          created_at:
+        }
+      }
+    end
+
+    def full_details
+      to_h.merge(
+        relationships: {
+          submitted_comments:,
+          submitted_issues:,
+          owned_organizations:,
+          teams:,
+          managed_projects:,
+          collaborations:,
+          assigned_issues:
+        }
       )
+    end
+
+    def to_json(options = {})
+      JSON(to_h, options)
     end
   end
 end

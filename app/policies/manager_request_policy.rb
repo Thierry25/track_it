@@ -2,7 +2,7 @@
 
 module TrackIt
   # Policy to determine if an account can add/remove manager in a project
-  class AddRemoveManagerRequestPolicy
+  class ManagerRequestPolicy
     def initialize(project, requestor_account, target_account)
       @project = project
       @requestor_account = requestor_account
@@ -15,7 +15,7 @@ module TrackIt
       @requestor.can_add_managers && @target.can_manage?
     end
 
-    def remove_manager?
+    def can_remove_manager?
       @requestor.can_remove_managers? && target_is_manager?
     end
 

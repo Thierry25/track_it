@@ -24,21 +24,28 @@ module TrackIt
 
     set_allowed_columns :name
 
-    def to_json(options = {})
-      JSON(
-        {
-          data: {
-            type: 'department',
-            attributes: {
-              id:,
-              name:
-            }
-            # included: {
-            #   organization:
-            # }
-          }
-        }, options
+    def to_h
+      {
+        type: 'department',
+        attributes: {
+          id:,
+          name:
+        }
+      }
+    end
+
+    def full_details
+      to_h.merge(
+        relationships: {
+          organization:,
+          projects:,
+          employees:
+        }
       )
+    end
+
+    def to_json(options = {})
+      JSON(to_h, options)
     end
   end
 end

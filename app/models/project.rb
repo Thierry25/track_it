@@ -66,26 +66,33 @@ module TrackIt
       self.url_secure = SecureDB.encrypt(plaintext)
     end
 
-    # rubocop:disable Metrics/MethodLength
-    def to_json(options = {})
-      #  include: {
-      #       project:
-      #     }
-      JSON(
-        {
-          data: {
-            type: 'project',
-            attributes: {
-              id:,
-              name:,
-              description:,
-              url:
-              # deadline:,
-            }
-          }
-        }, options
+    def to_h
+      {
+        type: 'project',
+        attributes: {
+          id:,
+          name:,
+          description:,
+          url:
+        }
+      }
+    end
+
+    def full_details
+      to_h.merge(
+        relationships: {
+          department:,
+          collaborators:,
+          managers:,
+          comments:,
+          issues:,
+          parent_organizations:
+        }
       )
     end
-    # rubocop:enable Metrics/MethodLength
+
+    def to_json(options = {})
+      JSON(to_h, options)
+    end
   end
 end

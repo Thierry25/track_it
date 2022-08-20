@@ -2,7 +2,7 @@
 
 module TrackIt
   # Policy to determine if an account can add/remove another in a department
-  class AddRemoveRequestPolicy
+  class EmployeeRequestPolicy
     def initialize(department, requestor_account, target_account)
       @department = department
       @requestor_account = requestor_account

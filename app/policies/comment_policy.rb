@@ -50,7 +50,14 @@ module TrackIt
     end
 
     def organization_owner?
-      owner = @comment.related_projects.first.department.organization.owner
+      proj = @comment.related_projects.first
+      issue = @comment.related_issues.first
+      owner = if proj
+                proj.department.organization.owner
+              else
+                issue.projects.first.department.oganization.owner
+              end
+
       @requestor == owner
     end
   end

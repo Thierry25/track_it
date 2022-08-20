@@ -53,27 +53,35 @@ module TrackIt
     end
 
     # rubocop:disable Metrics/MethodLength
-    def to_json(options = {})
-      JSON(
-        {
-          data: {
-            type: 'issue',
-            attributes: {
-              id:,
-              ticket_number:,
-              type:,
-              priority:,
-              status:,
-              description:,
-              title:,
-              completed:
-            }
-          },
-          included: {
-            submitter:
-          }
-        }, options
+    def to_h
+      {
+        type: 'issue',
+        attributes: {
+          id:,
+          ticket_number:,
+          type:,
+          priority:,
+          status:,
+          description:,
+          title:,
+          completed:
+        }
+      }
+    end
+
+    def full_details
+      to_h.merge(
+        relationships: {
+          submitter:,
+          assignees:,
+          comments:,
+          projects:
+        }
       )
+    end
+
+    def to_json(options = {})
+      JSON(to_h, options)
     end
     # rubocop:enable Metrics/MethodLength
   end
