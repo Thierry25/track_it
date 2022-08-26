@@ -12,7 +12,7 @@ module TrackIt
     end
 
     def can_add_manager?
-      @requestor.can_add_managers && @target.can_manage?
+      @requestor.can_add_managers? && @target.can_manage?
     end
 
     def can_remove_manager?

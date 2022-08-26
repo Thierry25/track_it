@@ -21,7 +21,7 @@ module TrackIt
     end
 
     def can_add_managers?
-      account_is_owner? || account_is_admin?
+      (account_is_owner? || account_is_admin?) && no_manager?
     end
 
     def can_remove_managers?
@@ -51,11 +51,11 @@ module TrackIt
     end
 
     def can_collaborate?
-      !(account_is_owner? || account_is_collaborator? || account_is_manager? || account_is_admin?)
+      !(account_is_owner? || account_is_collaborator? || account_is_manager? || account_is_admin?) && role? != 1 && role? != 2
     end
 
     def can_manage?
-      !(account_is_owner? || account_is_collaborator? || account_is_admin?) && role? == 2
+      !(account_is_owner? || account_is_collaborator? || account_is_admin? || account_is_manager?) && role? == 2
     end
 
     def summary
@@ -70,7 +70,8 @@ module TrackIt
         can_add_issues: can_add_issues?,
         can_remove_issues: can_remove_issues?,
         can_add_comments: can_add_comments?,
-        can_collaborate: can_collaborate?
+        can_collaborate: can_collaborate?,
+        can_manage: can_manage?
       }
     end
 
@@ -86,6 +87,10 @@ module TrackIt
 
     def account_is_manager?
       @project.managers.include? @account
+    end
+
+    def no_manager?
+      @project.managers.count.zero?
     end
 
     def account_is_employee?

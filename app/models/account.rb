@@ -8,7 +8,7 @@ module TrackIt
   # Models a registered account
   class Account < Sequel::Model
     # TO think more about submitted issues and comments, maybe I'm missing something here
-    one_to_many         :submitted_comments, class: :'TrackIt::Comment', key: :commenter_id
+    one_to_many         :submitted_comments, class: :'TrackIt::Comment', key: :submitter_id
     one_to_many         :submitted_issues, class: :'TrackIt::Issue', key: :submitter_id
     one_to_many         :owned_organizations, class: :'TrackIt::Organization', key: :owner_id
 
@@ -47,6 +47,14 @@ module TrackIt
 
     set_allowed_columns :first_name, :last_name, :email, :username, :password, :picture, :biography, :linkedin,
                         :instagram, :twitter, :youtube
+
+    def companies
+      comps = []
+      teams.each do |temp|
+        comps.append(temp.organization)
+      end
+      comps
+    end
 
     def password=(new_password)
       self.password_digest = Password.digest(new_password)

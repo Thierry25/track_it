@@ -12,11 +12,11 @@ module TrackIt
     end
 
     def can_add?
-      @requestor.can_add_employees? && target_is_employee?
+      @requestor.can_add_employees? && @target.can_be_employee?
     end
 
     def can_remove?
-      @requestor.can_remove_employees? && @target.can_leave?
+      @requestor.can_remove_employees? && target_is_employee?
     end
 
     private

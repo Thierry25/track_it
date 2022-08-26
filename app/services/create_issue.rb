@@ -6,20 +6,20 @@ module TrackIt
     # Error for account with no authorization
     class ForbiddenError < StandardError
       def message
-        'You are not allowed to create new issues you'
+        'You are not allowed to create new issues'
       end
+    end
 
-      # Error for requests with illegal attributes
-      class IllegalRequestError < StandardError
-        def message
-          'You cannot create issue with the following attributes'
-        end
+    # Error for requests with illegal attributes
+    class IllegalRequestError < StandardError
+      def message
+        'You cannot create issue with the following attributes'
       end
     end
 
     def self.call(account:, project:, issue_data:)
       policy = ProjectPolicy.new(account, project)
-      raise ForbiddenError unless policy.can_add_issues
+      raise ForbiddenError unless policy.can_add_issues?
 
       add_issue(account, project, issue_data)
     end

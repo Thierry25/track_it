@@ -55,7 +55,7 @@ module TrackIt
       owner = if proj
                 proj.department.organization.owner
               else
-                issue.projects.first.department.oganization.owner
+                issue.projects.first.department.organization.owner
               end
 
       @requestor == owner

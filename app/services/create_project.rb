@@ -18,7 +18,7 @@ module TrackIt
     end
 
     def self.call(account:, department:, project_data:)
-      policy = DepartmentPolicy.new(department, account)
+      policy = DepartmentPolicy.new(account, department)
       raise ForbiddenError unless policy.can_add_projects?
 
       add_project(department, project_data)

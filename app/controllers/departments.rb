@@ -34,27 +34,6 @@ module TrackIt
           end
         end
 
-        routing.on('projects') do
-          routing.post do
-            new_project = CreateProject.call(
-              account: @auth_account,
-              department: @req_department,
-              project_data: JSON.parse(routing.body.read)
-            )
-
-            response.status = 201
-            response['Location'] = "#{@proj_route}/#{new_project.id}"
-            { message: 'Project successfully created', data: new_project }.to_json
-          rescue CreateProject::ForbiddenError => e
-            routing.halt 403, { message: e.message }.to_json
-          rescue CreateProject::IllegalRequestError => e
-            routing.halt 400, { message: e.message }.to_json
-          rescue StandardError => e
-            Api.logger.warn "Could not create project: #{e.message}"
-            routing.halt 500, { message: 'API server error' }.to_json
-          end
-        end
-
         routing.on('employees') do
           # PUT api/v1/organizations/[ID]/departments/[ID]/employees
           routing.put do
@@ -80,13 +59,47 @@ module TrackIt
 
             employee = RemoveEmployee.call(
               account: @auth_account,
-              department: req_department,
+              department: @req_department,
               employee_email: req_data['email']
             )
 
             { message: "#{employee.username} removed from department",
               data: employee }.to_json
           rescue RemoveEmployee::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue StandardError
+            routing.halt 500, { message: 'API server error' }.to_json
+          end
+        end
+
+        routing.on('admins') do
+          routing.put do
+            req_data = JSON.parse(routing.body.read)
+
+            admin = AddAdmin.call(
+              account: @auth_account,
+              department_id:,
+              admin_email: req_data['email']
+            )
+
+            { data: admin }.to_json
+          rescue AddAdmin::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue StandardError
+            routing.halt 500, { message: 'API server error' }.to_json
+          end
+
+          routing.delete do
+            req_data = JSON.parse(routing.body.read)
+
+            admin = RemoveAdmin.call(
+              account: @auth_account,
+              department: @req_department,
+              admin_email: req_data['email']
+            )
+            { message: "#{admin.username} removed from department",
+              data: admin }.to_json
+          rescue RemoveAdmin::ForbiddenError => e
             routing.halt 403, { message: e.message }.to_json
           rescue StandardError
             routing.halt 500, { message: 'API server error' }.to_json

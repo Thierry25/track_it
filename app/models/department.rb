@@ -24,6 +24,12 @@ module TrackIt
 
     set_allowed_columns :name
 
+    def admins
+      employees&.select do |emp|
+        emp.values[:role_id] == 1
+      end
+    end
+
     def to_h
       {
         type: 'department',
@@ -39,7 +45,8 @@ module TrackIt
         relationships: {
           organization:,
           projects:,
-          employees:
+          employees:,
+          admins:
         }
       )
     end

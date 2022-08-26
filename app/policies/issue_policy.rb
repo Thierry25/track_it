@@ -34,7 +34,7 @@ module TrackIt
     end
 
     def can_be_assigned_issue?
-      !(account_is_manager? || account_is_admin || account_is_tester) && account_is_collaborator?
+      !(account_is_manager? || account_is_admin? || account_is_tester?) && account_is_collaborator?
     end
 
     def summary
@@ -64,7 +64,7 @@ module TrackIt
     end
 
     def account_is_collaborator?
-      issue.projects.first.collaborators.include? @account
+      @issue.projects.first.collaborators.include? @account
     end
 
     def account_is_assignee?

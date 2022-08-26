@@ -1,8 +1,6 @@
 ---
 - team_name: IT
   data:
-    - email: soumya.ray@gmail.com
-      role_id: 1
     - email: stephen.curry@outlook.com
       role_id: 2
     - email: odiceloud99@gmail.com
@@ -12,15 +10,13 @@
     - email: luka@gmail.com
       role_id: 4
     - email: neymar@gmail.com
-      role_id: 2
-    - email: fabricemarcelin@gmail.com
       role_id: 3
+    - email: fabricemarcelin@gmail.com
+      role_id: 4
     - email: lionel.messi@gmail.com
       role_id: 3
 - team_name: HR
   data:
-    - email: lionel.messi@gmail.com
-      role_id: 1
     - email: lebron.james@gmail.com
       role_id: 2
     - email: kevin.durant@outlook.com
@@ -28,9 +24,9 @@
     - email: gianis@gmail.com
       role_id: 3
     - email: neymar@gmail.com
-      role_id: 2
+      role_id: 4
     - email: luka@gmail.com
-      role_id: 2
+      role_id: 4
     - email: cristiano.ronaldo@gmail.com
       role_id: 3
     - email: fabricemarcelin@gmail.com
@@ -43,8 +39,8 @@
       role_id: 2
     - email: odiceloud99@gmail.com
       role_id: 2
-    - email: luka@gmail.com
-      role_id: 1
+    # - email: luka@gmail.com
+    #   role_id: 1
     - email: gianis@gmail.com
       role_id: 4
     - email: fabricemarcelin@gmail.com

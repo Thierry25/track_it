@@ -16,7 +16,7 @@ module TrackIt
     end
 
     def can_remove?
-      @requestor.can_remove_collaborators && target_is_collaborator?
+      @requestor.can_remove_collaborators? && target_is_collaborator?
     end
 
     private

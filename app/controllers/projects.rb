@@ -199,10 +199,29 @@ module TrackIt
           rescue CreateIssue::IllegalRequestError => e
             routing.halt 400, { message: e.message }.to_json
           rescue StandardError => e
-            Api.logger.warn "Could not create comment: #{e.message}"
+            Api.logger.warn "Could not create issue #{e.message}"
             routing.halt 500, { message: 'API server error' }.to_json
           end
         end
+      end
+
+      routing.post do
+        new_project = CreateProject.call(
+          account: @auth_account,
+          department: @req_department,
+          project_data: JSON.parse(routing.body.read)
+        )
+
+        response.status = 201
+        response['Location'] = "#{@proj_route}/#{new_project.id}"
+        { message: 'Project successfully created', data: new_project }.to_json
+      rescue CreateProject::ForbiddenError => e
+        routing.halt 403, { message: e.message }.to_json
+      rescue CreateProject::IllegalRequestError => e
+        routing.halt 400, { message: e.message }.to_json
+      rescue StandardError => e
+        Api.logger.warn "Could not create project: #{e.message}"
+        routing.halt 500, { message: 'API server error' }.to_json
       end
     end
   end

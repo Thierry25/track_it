@@ -7,7 +7,7 @@ module TrackIt
     class ForbiddenError < StandardError
       def message
         'You are not allowed to create an issue related to that comment'
-      end   
+      end
     end
 
     # Error for requests with illegal attributes
@@ -25,10 +25,10 @@ module TrackIt
     end
 
     def self.add_comment(account, issue, comment_data)
-        comment = account.add_submitted_comment(comment_data)
-        issue.add_comment(comment)
+      comment = account.add_submitted_comment(comment_data)
+      issue.add_comment(comment)
     rescue Sequel::MassAssignmentRestriction
-        raise IllegalRequestError
+      raise IllegalRequestError
     end
 
     private_class_method :add_comment

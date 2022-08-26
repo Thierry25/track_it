@@ -40,6 +40,22 @@ module TrackIt
       account_is_owner?
     end
 
+    def can_add_admin?
+      account_is_owner? && admin_count?
+    end
+
+    def can_remove_admin?
+      account_is_owner?
+    end
+
+    def can_be_employee?
+      !(account_is_owner? || account_is_employee?)
+    end
+
+    def can_be_admin?
+      !(account_is_owner? || role? == 2 || role? == 3 || role? == 4)
+    end
+
     def summary
       {
         can_view: can_view?,
@@ -49,7 +65,11 @@ module TrackIt
         can_add_projects: can_add_projects?,
         can_remove_projects: can_remove_projects?,
         can_add_employees: can_add_employees?,
-        can_remove_employees: can_remove_employees?
+        can_remove_employees: can_remove_employees?,
+        can_be_employee: can_be_employee?,
+        can_add_admin: can_add_admin?,
+        can_remove_admin: can_remove_admin?,
+        can_be_admin: can_be_admin?
       }
     end
 
@@ -57,6 +77,10 @@ module TrackIt
 
     def account_is_owner?
       @department.organization.owner == @account
+    end
+
+    def admin_count?
+      @department.admins.count < 2
     end
 
     def account_is_employee?
@@ -79,6 +103,17 @@ module TrackIt
         end
       end
       dep.values[:role_id] == 1 if dep
+    end
+
+    def role?
+      dep = nil
+      @account.teams.each do |team|
+        if team.id == @department.id
+          dep = team
+          break
+        end
+      end
+      dep.values[:role_id].to_i if dep
     end
   end
 end

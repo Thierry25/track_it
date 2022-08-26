@@ -16,8 +16,16 @@ module TrackIt
 
       raise ForbiddenError unless policy.can_remove?
 
-      department.remove_employee(employee)
+      remove_employee(department, employee)
       employee
     end
+
+    def self.remove_employee(department, employee)
+      department.employees.reject do |emp|
+        emp.id == employee.id
+      end
+    end
+
+    private_class_method :remove_employee
   end
 end
