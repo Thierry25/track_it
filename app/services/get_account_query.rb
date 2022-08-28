@@ -16,6 +16,7 @@ module TrackIt
       policy = AccountPolicy.new(requestor, account)
       raise ForbiddenError unless policy.can_view?
 
+      # UPDATE THIS TO KNOW WHICH TYPE OF RESPONSE TO GIVE
       account.full_details.merge(policies: policy.summary)
     end
   end

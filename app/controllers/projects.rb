@@ -5,6 +5,8 @@ require_relative './app'
 require_relative './organizations'
 require_relative './departments'
 
+# TODO: ADD ALL DEPARTMENT USERS AS COLLABORATORS
+
 module TrackIt
   # Web Controller for TrackIt API
   class Api < Roda

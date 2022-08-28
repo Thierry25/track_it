@@ -25,7 +25,8 @@ module TrackIt
       private
 
       def all_organizations(account)
-        account.owned_organizations + account.companies
+        # account.owned_organizations + account.companies
+        account.companies
       end
 
       def includes_employee?(organization, account)

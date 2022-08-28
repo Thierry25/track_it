@@ -6,6 +6,7 @@ module TrackIt
     def initialize(account, issue)
       @account = account
       @issue = issue
+      @department = @issue.projects&.first&.department
     end
 
     def can_view?
@@ -56,41 +57,27 @@ module TrackIt
     end
 
     def account_is_owner?
-      @issue.projects.first.department.organization.owner == @account
+      @department&.organization&.owner == @account
     end
 
     def account_is_manager?
-      @issue.projects.first.managers.include? @account
+      @issue.projects&.first&.managers&.include? @account
     end
 
     def account_is_collaborator?
-      @issue.projects.first.collaborators.include? @account
+      @issue.projects&.first&.collaborators&.include? @account
     end
 
     def account_is_assignee?
-      @issue.assignees.include? @account
+      @issue.assignees&.include? @account
     end
 
     def account_is_admin?
-      dep = nil
-      @account.teams.each do |team|
-        if team.id == @issue.projects.first.department.id
-          dep = team
-          break
-        end
-      end
-      dep.values[:role_id] == 1 if dep
+      @department&.admins&.map(&:id)&.include? @account.id
     end
 
     def account_is_tester?
-      dep = nil
-      @account.teams.each do |team|
-        if team.id == @issue.projects.first.department.id
-          dep = team
-          break
-        end
-      end
-      dep.values[:role_id] == 4 if dep
+      @department&.testers&.map(&:id)&.include? @account.id
     end
   end
 end

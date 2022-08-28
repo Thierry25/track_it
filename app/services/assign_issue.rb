@@ -6,7 +6,7 @@ module TrackIt
     # Error for account that cannot assign issue to another account
     class ForbiddenError < StandardError
       def message
-        'You are not allowed to assign this issue to any accounts'
+        'You are not allowed to assign this issue to this account'
       end
     end
 

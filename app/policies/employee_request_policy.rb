@@ -23,7 +23,7 @@ module TrackIt
 
     def target_is_employee?
       is_there = false
-      @target_account.teams.each do |team|
+      @target_account.teams&.each do |team|
         if team.id == @department.id
           is_there = true
           break

@@ -36,49 +36,29 @@ module TrackIt
 
     def proj_collaborator?
       proj = @comment.related_projects.first
-      proj.collaborators.include? @requestor if proj
+      proj&.collaborators&.include? @requestor if proj
     end
 
     def proj_manager?
       proj = @comment.related_projects.first
-      proj.managers.include? @requestor if proj
+      proj&.managers&.include? @requestor if proj
     end
 
     def assigned?
       issue = @comment.related_issues.first
-      issue.assignees.include? @requestor if issue
+      issue&.assignees&.include? @requestor if issue
     end
 
     def organization_owner?
       proj = @comment.related_projects.first
       issue = @comment.related_issues.first
       owner = if proj
-                proj.department.organization.owner
+                proj.department&.organization&.owner
               else
-                issue.projects.first.department.organization.owner
+                issue.projects.first&.department&.organization&.owner
               end
 
       @requestor == owner
     end
   end
 end
-
-#   def dep_admin?
-#     proj = @comment.related_projects.first
-#     issue = @comment.related_issues.first
-#     data = proj.nil? ? issue.projects.first.department : proj.department
-#     if employee?(@requestor, data)
-
-#     end
-#   end
-
-#   def employee?(collaborator, department)
-#       is_there = false
-#       collaborator.teams.each do |team|
-#         if team.id == department.id
-#           is_there = true
-#           break
-#         end
-#       end
-#       is_there
-#     end

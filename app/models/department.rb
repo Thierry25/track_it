@@ -30,6 +30,24 @@ module TrackIt
       end
     end
 
+    def project_managers
+      employees&.select do |emp|
+        emp.values[:role_id] == 2
+      end
+    end
+
+    def soft_devs
+      employees&.select do |emp|
+        emp.values[:role_id] == 3
+      end
+    end
+
+    def testers
+      employees&.select do |emp|
+        emp.values[:role_id] == 4
+      end
+    end
+
     def to_h
       {
         type: 'department',
@@ -46,7 +64,10 @@ module TrackIt
           organization:,
           projects:,
           employees:,
-          admins:
+          admins:,
+          project_managers:,
+          soft_devs:,
+          testers:
         }
       )
     end

@@ -53,7 +53,8 @@ module TrackIt
     end
 
     def can_be_admin?
-      !(account_is_owner? || role? == 2 || role? == 3 || role? == 4)
+      # !(account_is_owner? || role? == 2 || role? == 3 || role? == 4)
+      !(account_is_owner? || account_is_manager? || account_is_soft_dev? || account_is_tester?)
     end
 
     def summary
@@ -80,12 +81,12 @@ module TrackIt
     end
 
     def admin_count?
-      @department.admins.count < 2
+      @department.admins.count.zero?
     end
 
     def account_is_employee?
       is_there = false
-      @account.teams.each do |team|
+      @account&.teams&.each do |team|
         if team.id == @department.id
           is_there = true
           break
@@ -95,25 +96,21 @@ module TrackIt
     end
 
     def account_is_admin?
-      dep = nil
-      @account.teams.each do |team|
-        if team.id == @department.id
-          dep = team
-          break
-        end
-      end
-      dep.values[:role_id] == 1 if dep
+      @department.admins&.map(&:id)&.include? @account.id
     end
 
-    def role?
-      dep = nil
-      @account.teams.each do |team|
-        if team.id == @department.id
-          dep = team
-          break
-        end
-      end
-      dep.values[:role_id].to_i if dep
+    def account_is_manager?
+      @department.project_managers&.map(&:id)&.include? @account.id
+    end
+
+    def account_is_soft_dev?
+      @account.developing_at&.map(&:id)&.include? @department.id
+      # @department.soft_devs&.map(&:id)&.include? @account.id
+    end
+
+    def account_is_tester?
+      @account.testing_at&.map(&:id)&.include? @department.id
+      # @department.testers&.map(&:id)&.include? @account.id
     end
   end
 end

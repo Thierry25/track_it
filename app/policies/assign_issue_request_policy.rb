@@ -22,7 +22,7 @@ module TrackIt
     private
 
     def target_is_assignee?
-      @issue.assignees.include?(@target_account)
+      @issue&.assignees&.include?(@target_account)
     end
   end
 end

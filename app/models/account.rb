@@ -49,11 +49,31 @@ module TrackIt
                         :instagram, :twitter, :youtube
 
     def companies
-      comps = []
-      teams.each do |temp|
-        comps.append(temp.organization)
+      owned_organizations + teams&.map(&:organization)
+    end
+
+    def administrated_departments
+      teams&.select do |team|
+        team.values[:role_id] == 1
       end
-      comps
+    end
+
+    def managing_at
+      teams&.select do |team|
+        team.values[:role_id] == 2
+      end
+    end
+
+    def developing_at
+      teams&.select do |team|
+        team.values[:role_id] == 3
+      end
+    end
+
+    def testing_at
+      teams&.select do |team|
+        team.values[:role_id] == 4
+      end
     end
 
     def password=(new_password)
@@ -93,7 +113,12 @@ module TrackIt
           teams:,
           managed_projects:,
           collaborations:,
-          assigned_issues:
+          assigned_issues:,
+          companies:,
+          administrated_departments:,
+          managing_at:,
+          developing_at:,
+          testing_at:
         }
       )
     end

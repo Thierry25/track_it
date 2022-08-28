@@ -22,7 +22,7 @@ module TrackIt
     private
 
     def target_is_collaborator?
-      @project.collaborators.include?(@target_account)
+      @project.collaborators&.include?(@target_account)
     end
   end
 end

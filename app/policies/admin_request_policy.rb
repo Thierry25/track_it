@@ -22,7 +22,7 @@ module TrackIt
     private
 
     def target_is_admin?
-      @department.admins.first&.username == @target_account.username
+      @department.admins&.map(&:id)&.include? @target_account.id
     end
   end
 end

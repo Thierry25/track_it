@@ -45,7 +45,7 @@ module TrackIt
     end
 
     def account_is_employee?
-      @organization.employees.include? @account
+      @organization.employees&.include? @account
     end
   end
 end

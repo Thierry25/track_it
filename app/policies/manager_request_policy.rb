@@ -22,7 +22,7 @@ module TrackIt
     private
 
     def target_is_manager?
-      @project.managers.include?(@target_account)
+      @project.managers&.include?(@target_account)
     end
   end
 end
