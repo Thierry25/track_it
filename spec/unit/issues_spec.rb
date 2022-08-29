@@ -31,7 +31,7 @@ describe 'Test Issue Handling' do
     acc = TrackIt::Account.first
     new_issue = acc.add_submitted_issue(issue_data)
 
-    _(new_issue.id.is_a?(Numeric)).must_equal true
+    _(new_issue.id.is_a?(Numeric)).must_equal false
   end
 
   it 'SECURITY: should secure sensitive attributes' do

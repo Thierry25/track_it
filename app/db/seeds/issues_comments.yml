@@ -1,12 +1,15 @@
 ---
 - ticket_number: Z9mT+Cm/AklHHuXvWwTKJ5817aYOUaEO/vN18CjVL4w=
-  comment_content:
+  content:
     - This is a comment about the first issue.
     - I don't even know what to say at this point.
+  submitter_email: fabricemarcelin@gmail.com
 - ticket_number: HitL+7UxYHO8o4DIzETTZU+2eNNDvem19tCjXi188T8=
-  comment_content:
+  content:
     - This is a comment about the second issue.
     - This is a comment about the second issue again.
+  submitter_email: lionel.messi@gmail.com
 - ticket_number: J06K9G77LBQqmkKMmm10kSSci8wQIzkrSTFVNFQP7oY=
-  comment_content:
+  content:
     - This is a comment about the third again.
+  submitter_email: odiceloud99@gmail.com

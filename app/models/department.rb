@@ -24,18 +24,56 @@ module TrackIt
 
     set_allowed_columns :name
 
-    def to_json(options = {})
-      JSON(
-        {
-          data: {
-            type: 'department',
-            attributes: {
-              id:,
-              name:
-            }
-          }
-        }, options
+    def admins
+      employees&.select do |emp|
+        emp.values[:role_id] == 1
+      end
+    end
+
+    def project_managers
+      employees&.select do |emp|
+        emp.values[:role_id] == 2
+      end
+    end
+
+    def soft_devs
+      employees&.select do |emp|
+        emp.values[:role_id] == 3
+      end
+    end
+
+    def testers
+      employees&.select do |emp|
+        emp.values[:role_id] == 4
+      end
+    end
+
+    def to_h
+      {
+        type: 'department',
+        attributes: {
+          id:,
+          name:
+        }
+      }
+    end
+
+    def full_details
+      to_h.merge(
+        relationships: {
+          organization:,
+          projects:,
+          employees:,
+          admins:,
+          project_managers:,
+          soft_devs:,
+          testers:
+        }
       )
+    end
+
+    def to_json(options = {})
+      JSON(to_h, options)
     end
   end
 end

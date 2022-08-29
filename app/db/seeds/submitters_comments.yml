@@ -1,16 +1,15 @@
 ---
-- submitter_email: soumya.ray@gmail.com
+- submitter_email: gianis@gmail.com
+  project_name: EtaShare
   content:
     - This is a comment about the project EtaShare.
-    - This is a comment about the first issue.
-    - I don't even know what to say at this point.
-    - This is a comment about the third again.
-    - The colors do not match and it looks very weird.
     - Congratulations! This project looks very professional.
-- submitter_email: stephen.curry@outlook.com
+    - This is a comment about the second issue again.
+- submitter_email: cristiano.ronaldo@gmail.com
+  project_name: Allo Chat
+  content:
+    - The colors do not match and it looks very weird.
+- submitter_email: fabricemarcelin@gmail.com
+  project_name: ADS Messenger
   content:
     - This is a comment about the project ADS Messenger.
-    - This is a comment about the second issue.
-    - This is a comment about the second issue again.
-    - This is a comment about the project ADS Messenger.
-    - This is a real spaghetti code.

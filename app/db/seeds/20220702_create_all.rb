@@ -6,19 +6,15 @@ Sequel.seed(:development) do
     create_accounts
     create_owned_organizations
     create_departments
-    create_projects
-    create_issues
-    create_comments
-    # many_to_many
     add_employees_to_department
+    add_admins_to_department
+    create_projects
     add_managed_projects
     add_collaborators
+    create_issues
     add_assigned_issues
-    add_issues_to_project
-    add_comments_to_issue
-    add_comments_to_project
-
-    # add_project_to_organization
+    create_projects_comments
+    create_issues_comments
   end
 end
 
@@ -33,9 +29,9 @@ ISSUES_INFO = YAML.load_file("#{DIR}/issues_seed.yml")
 COMMENTS_INFO = YAML.load_file("#{DIR}/comments_seed.yml")
 # -
 ASSIGN_INFO = YAML.load_file("#{DIR}/accounts_assigned_issues.yml")
+ADMIN_INFO = YAML.load_file("#{DIR}/admins_departments.yml")
 DEPARTM_PROJ_INFO = YAML.load_file("#{DIR}/departments_projects.yml")
 EMPLOYEE_INFO = YAML.load_file("#{DIR}/employees_departments.yml")
-EMPLOYEE_ORG_INFO = YAML.load_file("#{DIR}/employees_organizations.yml")
 ISSUE_COMMENT_INFO = YAML.load_file("#{DIR}/issues_comments.yml")
 MANAGER_INFO = YAML.load_file("#{DIR}/managers_projects.yml")
 ORG_DEPARTMENT_INFO = YAML.load_file("#{DIR}/organizations_departments.yml")
@@ -57,7 +53,7 @@ def create_owned_organizations
     account = TrackIt::Account.first(username: owner['username'])
     owner['organization_name'].each do |org_name|
       organization_data = ORGANIZATIONS_INFO.find { |org| org['name'] == org_name }
-      TrackIt::CreateOrganizationForOwner.call(
+      TrackIt::CreateOrganization.call(
         owner_id: account.id, organization_data:
       )
     end
@@ -69,46 +65,9 @@ def create_departments
     organization = TrackIt::Organization.first(name: org['org_name'])
     org['depart_name'].each do |department|
       department_data = DEPARTMENTS_INFO.find { |dp| dp['name'] == department }
-      TrackIt::CreateDepartmentForOrganization.call(
-        organization_id: organization.id, department_data:
-      )
-    end
-  end
-end
-
-def create_projects
-  DEPARTM_PROJ_INFO.each do |dep|
-    department = TrackIt::Department.first(name: dep['dep_name'])
-    dep['proj_name'].each do |project|
-      project_data = PROJ_INFO.find { |proj| proj['name'] == project }
-      TrackIt::CreateProjectForDepartment.call(
-        department_id: department.id, project_data:
-      )
-    end
-  end
-end
-
-def create_issues
-  ISSUE_SUBMITTER_INFO.each do |issue_info|
-    account = TrackIt::Account.first(email: issue_info['submitter_email'])
-    issue_info['ticket_number'].each do |issue|
-      issue_data = ISSUES_INFO.find { |iss| iss['ticket_number'] == issue }
-      TrackIt::CreateIssueForSubmitter.call(
-        submitter_id: account.id, issue_data:
-      )
-    end
-  end
-end
-
-def create_comments
-  COMMENT_SUBMITTER_INFO.each do |comment_info|
-    # binding.pry
-    account = TrackIt::Account.first(email: comment_info['submitter_email'])
-    comment_info['content'].each do |comment|
-      comment_data = COMMENTS_INFO.find { |comm| comm['content'] == comment }
-      # binding.pry
-      TrackIt::CreateCommentForSubmitter.call(
-        submitter_id: account.id, comment_data:
+      account = organization.owner
+      TrackIt::CreateDepartment.call(
+        account:, organization:, department_data:
       )
     end
   end
@@ -118,9 +77,33 @@ def add_employees_to_department
   EMPLOYEE_INFO.each do |emp|
     # binding.pry
     department = TrackIt::Department.first(name: emp['team_name'])
+    account = department.organization.owner
     emp['data'].each do |data|
-      TrackIt::AddEmployeeToDepartment.call(
-        department_id: department.id, email: data['email'], role_id: data['role_id']
+      TrackIt::AddEmployee.call(
+        account:, department_id: department.id, employee_email: data['email'], role_id: data['role_id']
+      )
+    end
+  end
+end
+
+def add_admins_to_department
+  ADMIN_INFO.each do |admin_info|
+    department = TrackIt::Department.first(name: admin_info['team_name'])
+    account = department.organization.owner
+    TrackIt::AddAdmin.call(
+      account:, department_id: department.id, admin_email: admin_info['email']
+    )
+  end
+end
+
+def create_projects
+  DEPARTM_PROJ_INFO.each do |dep|
+    department = TrackIt::Department.first(name: dep['dep_name'])
+    dep['proj_name'].each do |project|
+      project_data = PROJ_INFO.find { |proj| proj['name'] == project }
+      account = department.organization.owner
+      TrackIt::CreateProject.call(
+        account:, department:, project_data:
       )
     end
   end
@@ -129,9 +112,10 @@ end
 def add_managed_projects
   MANAGER_INFO.each do |management|
     project = TrackIt::Project.first(name: management['proj_name'])
+    account = project.department.organization.owner
     management['manager_email'].each do |email|
-      TrackIt::AddManagedProjectForManager.call(
-        email:, project_id: project.id
+      TrackIt::AddManager.call(
+        account:, project:, manager_email: email
       )
     end
   end
@@ -140,10 +124,24 @@ end
 def add_collaborators
   CONTRIB_INFO.each do |contrib|
     project = TrackIt::Project.first(name: contrib['proj_name'])
+    account = project.department.organization.owner
     contrib['collaborator_email'].each do |email|
       # binding.pry
-      TrackIt::AddCollaboratorToProject.call(
-        project_id: project.id, email:
+      TrackIt::AddCollaborator.call(
+        account:, project:, collaborator_email: email
+      )
+    end
+  end
+end
+
+def create_issues
+  ISSUE_SUBMITTER_INFO.each do |issue_info|
+    account = TrackIt::Account.first(email: issue_info['submitter_email'])
+    project = TrackIt::Project.first(name: issue_info['project_name'])
+    issue_info['ticket_number'].each do |issue|
+      issue_data = ISSUES_INFO.find { |iss| iss['ticket_number'] == issue }
+      TrackIt::CreateIssue.call(
+        account:, project:, issue_data:
       )
     end
   end
@@ -152,46 +150,38 @@ end
 def add_assigned_issues
   ASSIGN_INFO.each do |assign|
     issue = TrackIt::Issue.first(ticket_number: assign['ticket_number'])
-    dp = TrackIt::Department.first(name: assign['department_name'])
+    account = issue.projects.first.managers.first
     assign['assignee_email'].each do |email|
-      TrackIt::AssignIssueToAccount.call(
-        issue_id: issue.id, email:, department_id: dp.id
+      TrackIt::AssignIssue.call(
+        account:, issue:, assignee_email: email
       )
     end
   end
 end
 
-def add_issues_to_project
-  PROJ_ISSUE_INFO.each do |info|
-    project = TrackIt::Project.first(name: info['project_name'])
-    info['ticket_number'].each do |issue|
-      issue = TrackIt::Issue.first(ticket_number: issue)
-      TrackIt::AddIssueToProject.call(
-        project_id: project.id, issue_id: issue.id
+def create_projects_comments
+  COMMENT_SUBMITTER_INFO.each do |comment_info|
+    # binding.pry
+    account = TrackIt::Account.first(email: comment_info['submitter_email'])
+    project = TrackIt::Project.first(name: comment_info['project_name'])
+    comment_info['content'].each do |comment|
+      comment_data = COMMENTS_INFO.find { |comm| comm['content'] == comment }
+      # binding.pry
+      TrackIt::CreateComment.call(
+        account:, project:, comment_data:
       )
     end
   end
 end
 
-def add_comments_to_issue
+def create_issues_comments
   ISSUE_COMMENT_INFO.each do |iss_com|
+    account = TrackIt::Account.first(email: iss_com['submitter_email'])
     issue = TrackIt::Issue.first(ticket_number: iss_com['ticket_number'])
-    iss_com['comment_content'].each do |com|
-      comment = TrackIt::Comment.first(content: com)
-      TrackIt::AddCommentToIssue.call(
-        issue_id: issue.id, comment_id: comment.id
-      )
-    end
-  end
-end
-
-def add_comments_to_project
-  PROJ_COMMENT_INFO.each do |proj_com|
-    proj = TrackIt::Project.first(name: proj_com['proj_name'])
-    proj_com['comment_content'].each do |com|
-      comment = TrackIt::Comment.first(content: com)
-      TrackIt::AddCommentToProject.call(
-        project_id: proj.id, comment_id: comment.id
+    iss_com['content'].each do |comment|
+      comment_data = COMMENTS_INFO.find { |comm| comm['content'] == comment }
+      TrackIt::CreateIssueComment.call(
+        account:, issue:, comment_data:
       )
     end
   end

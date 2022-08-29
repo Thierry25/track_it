@@ -5,6 +5,8 @@ require_relative './app'
 require_relative './organizations'
 require_relative './departments'
 
+# TODO: ADD ALL DEPARTMENT USERS AS COLLABORATORS
+
 module TrackIt
   # Web Controller for TrackIt API
   class Api < Roda
@@ -13,170 +15,215 @@ module TrackIt
 
       routing.on String do |project_id|
         # GET api/v1/organizations/[org..ID]/departments/[dep..ID]/projects/[pro..ID]
+        @req_project = Project.first(id: project_id)
         routing.is do
           routing.get do
-            project = Project.where(department_id: @department_id, id: project_id).first
-            project ? project.to_json : raise('Project not found')
-
-          rescue StandardError => e
+            project = GetProjectQuery.call(
+              requestor: @auth_account, project: @req_project
+            )
+            { data: project }.to_json
+          rescue GetProjectQuery::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue GetProjectQuery::NotFoundError => e
             routing.halt 404, { message: e.message }.to_json
+          rescue StandardError => e
+            puts "GET PROJECT ERROR: #{e.inspect}"
+            routing.halt 500, { message: 'API server error' }.to_json
+          end
+        end
+
+        routing.on('managers') do
+          # PUT api/v1/organizations/[ID]/departments/[ID]/projects/[proj_id]/managers
+          routing.put do
+            req_data = JSON.parse(routing.body.read)
+
+            manager = AddManager.call(
+              account: @auth_account,
+              project: @req_project,
+              manager_email: req_data['email']
+            )
+
+            { data: manager }.to_json
+          rescue AddManager::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue StandardError
+            routing.halt 500, { message: 'API Server error' }.to_json
+          end
+
+          routing.delete do
+            req_data = JSON.parse(routing.body.read)
+
+            manager = RemoveManager.call(
+              account: @auth_account,
+              project: @req_project,
+              manager_email: req_data['email']
+            )
+
+            { data: "#{manager.username} removed as manager" }.to_json
+          rescue RemoveManager::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue StandardError
+            routing.halt 500, { message: 'API Server error' }.to_json
+          end
+        end
+
+        routing.on('collaborators') do
+          # PUT api/v1/organizations/[ID]/departments/[ID]/projects/[ID]/collaborators
+          routing.put do
+            req_data = JSON.parse(routing.body.read)
+
+            collaborator = AddCollaborator.call(
+              account: @auth_account,
+              project: @req_project,
+              collaborator_email: req_data['email']
+            )
+
+            { data: collaborator }.to_json
+          rescue AddCollaborator::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue StandardError
+            routing.halt 500, { message: 'API Server Error' }.to_json
+          end
+
+          routing.delete do
+            req_data = JSON.parse(routing.body.read)
+
+            collaborator = RemoveCollaborator.call(
+              account: @auth_account,
+              project: @req_project,
+              collaborator_email: req_data['email']
+            )
+
+            { data: collaborator }.to_json
+          rescue RemoveCollaborator::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue StandardError
+            routing.halt 500, { message: 'API Server Error' }.to_json
           end
         end
 
         routing.on('comments') do
-          routing.on String do |comment_id|
-            # GET api/v1/organizations/[o.ID]/de..s/[d.ID]/pr..s/[p.ID]/comments/[com..ID]
-            routing.get do
-              comment = TrackIt::Comment.first(id: comment_id)
-              comment ? comment.to_json : raise('Comment not found')
-            rescue StandardError => e
-              routing.halt 404, { message: e.message }.to_json
-            end
-          end
-
-          routing.get do
-            # GET api/v1/organizations/[o.ID]/de..s/[d.ID]/pr..s/[p.ID]/comments/
-
-            project = TrackIt::Project.where(department_id: @department_id, id: project_id).first
-            output = { data: project.comments }
-            JSON.pretty_generate(output)
-          rescue StandardError
-            routing.halt 404, { message: 'Could not find comments related to this project' }.to_json
-          end
-
           routing.post do
-            # THIS IS THE CODE THAT WILL ALLOW USERS TO POST COMMENTS TO A PROJECT
-            # THERE IS A WAY TO KNOW WHO IS THE AUTHENTICATED USER
-            # WILL THEN BE ABLE TO FIND THE ACCOUNT_ID
-            # routing.post do
-            #   new_data = JSON.parse(routing.body.read)
-            #   project = Comment.first(id: project_id)
-
-            #   account = Account.first(id: whatever)
-            #   comment = account.add_submitted_comment(new_data)
-            #   if comment.saved?
-            #     project.add_comment(comment)
-            # end
+            # CHECK IF USER CAN ADD ADD COMMENT, IF THEY CAN, ADD TO THE PROJECT
+            new_comment = CreateComment.call(
+              account: @auth_account,
+              project: @req_project,
+              comment_data: JSON.parse(routing.body.read)
+            )
+            response.status = 201
+            response['Location'] = "#{@comment_route}/#{new_comment.id}"
+            { message: 'Comment successfully created', data: new_comment }.to_json
+          rescue CreateComment::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue CreateComment::IllegalRequestError => e
+            routing.halt 400, { message: e.message }.to_json
+          rescue StandardError => e
+            Api.logger.warn "Could not create comment: #{e.message}"
+            routing.halt 500, { message: 'API server error' }.to_json
           end
         end
 
         routing.on('issues') do
-          @issue_route = "#{@api_root}/organizations/#{@organization_id}/departments/#{@department_id}/projects/issues"
+          # @issue_route = "#{@api_root}/organizations/#{@organization_id}/departments/#{@department_id}/projects/#{project_id}/issues"
 
           routing.on String do |issue_id|
-            routing.is do
-              # GET api/v1/organizations/[org..ID]/departments/[dep..ID]/projects/[pro..ID]/issues/[iss..ID]
-              routing.get do
-                issue = TrackIt::Issue.first(id: issue_id)
-                issue ? issue.to_json : raise('Issue not found')
-              rescue StandardError => e
-                routing.halt 404, { message: e.message }.to_json
+            @iss = Issue.first(id: issue_id)
+
+            routing.on('assignments') do
+              # PUT GET api/v1/organizations/[org..ID]/departments/[dep..ID]/projects/[pro..ID]/issues/[iss..ID]/assignments
+              routing.put do
+                req_data = JSON.parse(routing.body.read)
+
+                assignee = AssignIssue.call(
+                  account: @auth_account,
+                  issue: @iss,
+                  assignee_email: req_data['email']
+                )
+
+                { data: assignee }.to_json
+              rescue AssignIssue::ForbiddenError => e
+                routing.halt 403, { message: e.message }.to_json
+              rescue StandardError
+                routing.halt 500, { message: 'API Server Error' }.to_json
+              end
+
+              routing.delete do
+                req_data = JSON.parse(routing.body.read)
+
+                assignee = RemoveAssignedIssue.call(
+                  account: @auth_account,
+                  issue: @iss,
+                  assignee_email: req_data['email']
+                )
+
+                { data: assignee }.to_json
+              rescue RemoveAssignedIssue::ForbiddenError => e
+                routing.halt 403, { message: e.message }.to_json
+              rescue StandardError
+                routing.halt 500, { message: 'API Server Error' }.to_json
               end
             end
 
             routing.on('comments') do
-              routing.on String do |comment_id|
-                # GET api/v1/organizations/[o.ID]/de..s/[d.ID]/pr..s/[p.ID]/issues/[iss..ID]/co..ts/[com..ID]
-                routing.get do
-                  # binding.pry
-                  comment = TrackIt::Comment.first(id: comment_id)
-                  comment ? comment.to_json : raise('Comment not found')
-                rescue StandardError => e
-                  routing.halt 404, { message: e.message }.to_json
-                end
+              routing.post do
+                # CHECK IF USER CAN ADD ADD COMMENT, IF THEY CAN, ADD TO THE PROJECT
+                new_comment = CreateIssueComment.call(
+                  account: @auth_account,
+                  issue: @iss,
+                  comment_data: JSON.parse(routing.body.read)
+                )
+                response.status = 201
+                response['Location'] = "#{@comment_route}/#{new_comment.id}"
+                { message: 'Comment successfully created', data: new_comment }.to_json
+              rescue CreateIssueComment::ForbiddenError => e
+                routing.halt 403, { message: e.message }.to_json
+              rescue CreateIssueComment::IllegalRequestError => e
+                routing.halt 400, { message: e.message }.to_json
+              rescue StandardError => e
+                Api.logger.warn "Could not create comment: #{e.message}"
+                routing.halt 500, { message: 'API server error' }.to_json
               end
-
-              # GET api/v1/organizations/[org..ID]/departments/[dep..ID]/projects/[pro..ID]/issues/[iss..ID]/comments
-              routing.get do
-                issue = Issue.first(id: issue_id)
-                output = { data: issue.comments }
-                JSON.pretty_generate(output)
-
-              rescue StandardError
-                routing.halt 404,
-                             { message: 'Could not find issues related to this issue' }.to_json
-              end
-
-              # THIS IS THE CODE THAT WILL ALLOW USERS TO POST COMMENTS TO AN ISSUE
-              # THERE IS A WAY TO KNOW WHO IS THE AUTHENTICATED USER
-              # WILL THEN BE ABLE TO FIND THE ACCOUNT_ID
-              # routing.post do
-              #   new_data = JSON.parse(routing.body.read)
-              #   issue = Issue.first(id: issue_id)
-
-              #   account = Account.first(id: whatever)
-              #   comment = account.add_submitted_comment(new_data)
-              #   if issue.saved?
-              #     issue.add_comment(comment)
-              # end
             end
           end
 
-          routing.get do
-            # GET api/v1/organizations/[org..ID]/departments/[dep..ID]/projects/[pro..ID]/issues
-            project = Project.where(department_id: @department_id, id: project_id).first
-            output = { data: project.issues }
-            JSON.pretty_generate(output)
-          rescue StandardError
-            routing.halt 404,
-                         { message: 'Could not find issues related to this project' }.to_json
-          end
-
-          ## THIS IS THE CODE THAT WILL ALLOW USERS TO POST ISSUES
-          ## THERE IS A WAY TO KNOW WHO IS THE AUTHENTICATED USER
-          ## WILL THEN BE ABLE TO FIND THE ACCOUNT_ID
-          ## TO BE CHANGED LATER
           routing.post do
-            # ALLOW USERS TO UPLOAD ISSUES FOR TESTING PURPOSES
-            # project = Project.where(department_id:, id: project_id).first
-
-            #   account = Account.first(id: whatever)
-            #   issue = account.add_submitted_issue(new_data)
-            #   if issue.saved?
-            #     project.add_issue(issue)
-            new_data = JSON.parse(routing.body.read)
-            new_issue = TrackIt::Issue.new(new_data)
-            raise('Could not save issue') unless new_issue.save
+            new_issue = CreateIssue.call(
+              account: @auth_account,
+              project: @req_project,
+              issue_data: JSON.parse(routing.body.read)
+            )
 
             response.status = 201
             response['Location'] = "#{@issue_route}/#{new_issue.id}"
-            { message: 'Project saved', data: new_issue }.to_json
-          rescue Sequel::MassAssignmentRestriction
-            Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
-            routing.halt 400, { message: 'Illegal Attributes' }.to_json
+            { message: 'Issue saved', data: new_issue }.to_json
+          rescue CreateIssue::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue CreateIssue::IllegalRequestError => e
+            routing.halt 400, { message: e.message }.to_json
           rescue StandardError => e
-            Api.logger.error "UNKOWN ERROR: #{e.message}"
-            routing.halt 500, { message: 'Unknown server error' }.to_json
+            Api.logger.warn "Could not create issue #{e.message}"
+            routing.halt 500, { message: 'API server error' }.to_json
           end
         end
       end
-      # GET api/v1/organizations/[organization_ID]/departments/[department_ID]/projects
-      routing.get do
-        department = TrackIt::Department.where(organization_id: @organization_id, id: @department_id).first
-        output = { data: department.projects }
-        JSON.pretty_generate(output)
-      rescue StandardError
-        routing.halt 404, { message: 'Could not find projects within department' }.to_json
-      end
 
-      # POST api/v1/organizations/[organization_ID]/departments/[department_ID]/projects
       routing.post do
-        new_data = JSON.parse(routing.body.read)
-        # binding.pry
-        department = Department.where(organization_id: @organization_id, id: @department_id).first
-
-        proj = department.add_project(new_data)
-        raise('Could not save project') unless proj.save
+        new_project = CreateProject.call(
+          account: @auth_account,
+          department: @req_department,
+          project_data: JSON.parse(routing.body.read)
+        )
 
         response.status = 201
-        response['Location'] = "#{@proj_route}/#{proj.id}"
-        { message: 'Project successfully created', data: proj }.to_json
-      rescue Sequel::MassAssignmentRestriction
-        Api.logger.warn "MASS-ASSIGNMENT:: #{new_data.keys}"
-        routing.halt 400, { message: 'Illegal Request' }.to_json
+        response['Location'] = "#{@proj_route}/#{new_project.id}"
+        { message: 'Project successfully created', data: new_project }.to_json
+      rescue CreateProject::ForbiddenError => e
+        routing.halt 403, { message: e.message }.to_json
+      rescue CreateProject::IllegalRequestError => e
+        routing.halt 400, { message: e.message }.to_json
       rescue StandardError => e
-        Api.logger 'Unknown error saving project'
-        routing.halt 500, { message: e.message }.to_json
+        Api.logger.warn "Could not create project: #{e.message}"
+        routing.halt 500, { message: 'API server error' }.to_json
       end
     end
   end
