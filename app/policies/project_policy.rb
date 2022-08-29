@@ -39,7 +39,7 @@ module TrackIt
     # TO BE UPDATED IF NEEDED
     def can_add_issues?
       # Role 1 - admin, 2 - Project Manager, 3 - Developer, 4 - Tester
-      account_is_project_manager? || account_is_soft_dev? || account_is_tester?
+      account_is_project_manager? || ((account_is_soft_dev? || account_is_tester?) && account_is_collaborator?)
     end
 
     def can_remove_issues?

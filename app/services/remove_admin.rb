@@ -21,9 +21,10 @@ module TrackIt
     end
 
     def self.remove_admin(department, admin)
-      department.employees.reject do |emp|
-        emp.id == admin.id
-      end
+      # department.employees.reject do |emp|
+      #   emp.id == admin.id
+      # end
+      department.employees.delete_if { |emp| emp.id = admin.id }
     end
 
     private_class_method :remove_admin

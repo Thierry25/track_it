@@ -19,6 +19,7 @@ describe 'Test AddAssignIssue service' do
     @tester = TrackIt::Account.all[6]
 
     @assignee = TrackIt::Account.last
+    @other_soft_dev = TrackIt::Account.all[1]
 
     @not_employee = TrackIt::Account.all[7]
 
@@ -66,6 +67,14 @@ describe 'Test AddAssignIssue service' do
       role_id: 3
     )
 
+    # Add other soft dev to department
+    TrackIt::AddEmployee.call(
+      account: @owner,
+      department_id: @department.id,
+      employee_email: @other_soft_dev.email,
+      role_id: 3
+    )
+
     # Add tester to department for testing
     TrackIt::AddEmployee.call(
       account: @owner,
@@ -74,6 +83,7 @@ describe 'Test AddAssignIssue service' do
       role_id: 4
     )
 
+    @project.add_collaborator(@assignee)
     @issue = TrackIt::CreateIssue.call(
       account: @assignee,
       project: @project,
@@ -82,7 +92,6 @@ describe 'Test AddAssignIssue service' do
   end
 
   it 'HAPPY: manager should able to assign an issue to an account' do
-    @project.add_collaborator(@assignee)
     TrackIt::AssignIssue.call(
       account: @manager,
       issue: @issue,
@@ -94,7 +103,6 @@ describe 'Test AddAssignIssue service' do
   end
 
   it 'HAPPY: admin should able to assign an issue to an account' do
-    @project.add_collaborator(@assignee)
     TrackIt::AssignIssue.call(
       account: @admin,
       issue: @issue,
@@ -105,8 +113,17 @@ describe 'Test AddAssignIssue service' do
     _(@assignee.assigned_issues.first).must_equal @issue
   end
 
+  it 'SAD: should not be able to assign issue to non employee' do
+    _(proc {
+        TrackIt::AssignIssue.call(
+          account: @owner,
+          issue: @issue,
+          assignee_email: @not_employee.email
+        )
+      }).must_raise TrackIt::AssignIssue::ForbiddenError
+  end
+
   it 'BAD: owner should not be able to assign issue' do
-    @project.add_collaborator(@assignee)
     _(proc {
         TrackIt::AssignIssue.call(
           account: @owner,
@@ -162,7 +179,7 @@ describe 'Test AddAssignIssue service' do
         TrackIt::AssignIssue.call(
           account: @manager,
           issue: @issue,
-          assignee_email: @assignee.email
+          assignee_email: @other_soft_dev.email
         )
       }).must_raise TrackIt::AssignIssue::ForbiddenError
   end

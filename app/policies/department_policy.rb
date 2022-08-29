@@ -37,7 +37,7 @@ module TrackIt
     end
 
     def can_remove_employees?
-      account_is_owner?
+      account_is_owner? || account_is_admin?
     end
 
     def can_add_admin?

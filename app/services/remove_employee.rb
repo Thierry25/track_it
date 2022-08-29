@@ -21,9 +21,8 @@ module TrackIt
     end
 
     def self.remove_employee(department, employee)
-      department.employees.reject do |emp|
-        emp.id == employee.id
-      end
+      # department.employees.reject { |emp| emp.id == employee.id }
+      department.employees.delete_if { |emp| emp.id == employee.id }
     end
 
     private_class_method :remove_employee
