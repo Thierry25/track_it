@@ -68,7 +68,7 @@ describe 'Test Collaborator Handling' do
       _(added).must_be_nil
     end
 
-    it 'BAD AUTHORIZATION: shoudl not an owner as collaborator' do
+    it 'BAD AUTHORIZATION: should not an owner as collaborator' do
       TrackIt::Api.DB[:accounts_departments]
                   .insert(department_id: @dep.id, employee_id: @account.id, role_id: 3)
       req_data = { email: @account.email }

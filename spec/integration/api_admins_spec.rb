@@ -20,7 +20,6 @@ describe 'Test Admins Handling' do
     @dep = @org.add_department(DATA[:departments][1])
 
     header 'CONTENT_TYPE', 'application/json'
-
   end
 
   describe 'Adding admins to a department' do
