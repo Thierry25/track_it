@@ -69,36 +69,56 @@ module TrackIt
 
         routing.on('collaborators') do
           # PUT api/v1/organizations/[ID]/departments/[ID]/projects/[ID]/collaborators
-          routing.put do
-            req_data = JSON.parse(routing.body.read)
+          routing.is do
+            routing.put do
+              req_data = JSON.parse(routing.body.read)
 
-            collaborator = AddCollaborator.call(
-              account: @auth_account,
-              project: @req_project,
-              collaborator_email: req_data['email']
-            )
+              collaborator = AddCollaborator.call(
+                account: @auth_account,
+                project: @req_project,
+                collaborator_email: req_data['email']
+              )
 
-            { data: collaborator }.to_json
-          rescue AddCollaborator::ForbiddenError => e
-            routing.halt 403, { message: e.message }.to_json
-          rescue StandardError
-            routing.halt 500, { message: 'API Server Error' }.to_json
+              { data: collaborator }.to_json
+            rescue AddCollaborator::ForbiddenError => e
+              routing.halt 403, { message: e.message }.to_json
+            rescue StandardError
+              routing.halt 500, { message: 'API Server Error' }.to_json
+            end
+
+            routing.delete do
+              req_data = JSON.parse(routing.body.read)
+
+              collaborator = RemoveCollaborator.call(
+                account: @auth_account,
+                project: @req_project,
+                collaborator_email: req_data['email']
+              )
+
+              { data: collaborator }.to_json
+            rescue RemoveCollaborator::ForbiddenError => e
+              routing.halt 403, { message: e.message }.to_json
+            rescue StandardError
+              routing.halt 500, { message: 'API Server Error' }.to_json
+            end
           end
 
-          routing.delete do
-            req_data = JSON.parse(routing.body.read)
+          routing.on('all') do
+            routing.put do
+              req_data = JSON.parse(routing.body.read)
 
-            collaborator = RemoveCollaborator.call(
-              account: @auth_account,
-              project: @req_project,
-              collaborator_email: req_data['email']
-            )
+              collaborators = AddAllCollaborators.call(
+                account: @auth_account,
+                project: @req_project,
+                department_id: req_data['department']
+              )
 
-            { data: collaborator }.to_json
-          rescue RemoveCollaborator::ForbiddenError => e
-            routing.halt 403, { message: e.message }.to_json
-          rescue StandardError
-            routing.halt 500, { message: 'API Server Error' }.to_json
+              { data: collaborators }.to_json
+            rescue AddAllCollaborators::ForbiddenError => e
+              routing.halt 403, { message: e.message }.to_json
+            rescue Standard
+              routing.halt 500, { message: 'API Server Error' }.to_json
+            end
           end
         end
 
